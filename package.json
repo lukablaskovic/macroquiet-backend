@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/lukablaskovic/stranded-away-backend/issues"
   },
-  "homepage": "https://github.com/lukablaskovic/stranded-away-backend#readme"
+  "homepage": "https://github.com/lukablaskovic/stranded-away-backend#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
