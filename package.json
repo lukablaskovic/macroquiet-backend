@@ -1,0 +1,19 @@
+{
+  "name": "stranded-away-backend",
+  "version": "1.0.0",
+  "description": "Backend for Stranded Away video game project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukablaskovic/stranded-away-backend.git"
+  },
+  "author": "lukablaskovic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukablaskovic/stranded-away-backend/issues"
+  },
+  "homepage": "https://github.com/lukablaskovic/stranded-away-backend#readme"
+}
