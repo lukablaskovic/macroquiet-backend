@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for Stranded Away video game project",
   "main": "index.js",
-  "type" : "module",
+  "type": "module",
   "scripts": {
     "serve": "nodemon --exec babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/lukablaskovic/stranded-away-backend#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.3",
     "mongodb": "^4.5.0"
   },

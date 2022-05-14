@@ -1,27 +1,17 @@
 import express from "express";
+import storage from "./memory_storage.js";
+import cors from "cors";
 
 const app = express();
 
-//Routes
-app.get("/auth", async (req, res) => {
-  console.log(req.query);
-  res.send(`Hello ${req.query.userId} It is ${Date.now()}!`);
-});
-
-let studentHandler = (req, res) => {
-  let upit = req.params;
-  let upit2 = req.query;
-  console.log(upit);
-  //. obično bi ovdje odredili koji je odgovor
-  let odgovor = {
-    upit, //vraćamo upit natrag, čisto za provjeru
-    status: "uspješno",
-  };
-  res.json(odgovor);
-};
-app.get("/student/:uid", studentHandler);
-
+app.use(cors()); //Omoguci CORS na svim rutama
 const port = 3000;
+
+app.get("/storage", (req, res) => {
+  let query = req.query;
+  console.log(query.data);
+  res.json(storage[query.data]);
+});
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
