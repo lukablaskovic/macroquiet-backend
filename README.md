@@ -3,7 +3,7 @@
  Node.js/Express.js/MongoDB Back-end aplikacije za MacroQuiet Game Development - 2 people indie game development team.
 
 ### Poveznica na aplikaciju
-- https://macroquiet.com/ (Frontend)
+- https://macroquiet.com/ (Front-end)
 
 ### Autori i zaduženja
 
