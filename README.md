@@ -7,7 +7,7 @@
 
 ### Autori i zaduženja
 
--   Alesandro Žužić (azuzic@unipu.hr) - 
+-   Alesandro Žužić (azuzic@unipu.hr) - Moduli za: dodavanje vijesti, achivements, scoreboard.
 -   Luka Blašković (lblaskovi@unipu.hr) - Implementacija autentifikacije, spajanje na Unity API i komunikacija, Podešavanje MongoDB baze podataka, admin sučelje 
 
 ### Kratki opis funkcionalnosti
