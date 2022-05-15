@@ -9,7 +9,21 @@ app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
 const port = 3000;
 
-app.use("/users", async (req, res) => {
+app.post("/auth", async (req, res) => {
+  let userCredentials = req.body;
+
+  try {
+    let result = await auth.authenticateUser(
+      userCredentials.email,
+      userCredentials.password
+    );
+    res.json(result);
+  } catch (e) {
+    res.status(403).json({ error: e.message });
+  }
+});
+
+app.post("/users", async (req, res) => {
   let user = req.body;
   let id;
 
