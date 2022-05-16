@@ -1,5 +1,7 @@
+import "dotenv/config";
+
 import express from "express";
-import storage from "./memory_storage.js";
+//import storage from "./memory_storage.js";
 import connect from "./db.js";
 import cors from "cors";
 import auth from "./auth.js";
@@ -7,10 +9,16 @@ const app = express();
 
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
+
 const port = 3000;
+
+app.get("/tajna", [auth.verify], (req, res) => {
+  res.json({ message: "ovo je tajna " + req.jwt.email });
+});
 
 app.post("/auth", async (req, res) => {
   let userCredentials = req.body;
+  console.log(userCredentials);
 
   try {
     let result = await auth.authenticateUser(
@@ -19,7 +27,7 @@ app.post("/auth", async (req, res) => {
     );
     res.json(result);
   } catch (e) {
-    res.status(403).json({ error: e.message });
+    res.status(401).json({ error: e.message });
   }
 });
 

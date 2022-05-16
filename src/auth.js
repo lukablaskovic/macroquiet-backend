@@ -1,4 +1,3 @@
-import mongo from "mongodb";
 import connect from "./db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -30,11 +29,13 @@ export default {
     }
   },
   async authenticateUser(email, password) {
+    console.log(email, password);
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
+    console.log(user);
     if (user && user.password && (await checkUser(password, user.password))) {
       delete user.password;
-      let token = jwt.sign(user, "tajna", {
+      let token = jwt.sign(user, process.env.JWT_SECRET, {
         algorithm: "HS512",
         expiresIn: "1 week",
       });
@@ -45,6 +46,23 @@ export default {
       };
     } else {
       throw new Error("Cannot authenticate");
+    }
+  },
+  verify(req, res, next) {
+    try {
+      let authorization = req.headers.authorization.split(" ");
+      let type = authorization[0];
+      let token = authorization[1];
+      console.log(type, token);
+      if (type !== "Bearer") {
+        res.status(401).send(); //Ako nije  bearer, vrati 401
+        return false;
+      } else {
+        req.jwt = jwt.verify(token, process.env.JWT_SECRET); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
+        return next();
+      }
+    } catch (e) {
+      return res.status(401).send(); //Ako dode do bilo kakvog excpetiona, vrati 401
     }
   },
 };
