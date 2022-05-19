@@ -29,10 +29,8 @@ export default {
     }
   },
   async authenticateUser(email, password) {
-    console.log(email, password);
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
-    console.log(user);
     if (user && user.password && (await checkUser(password, user.password))) {
       delete user.password;
       let token = jwt.sign(user, process.env.JWT_SECRET, {
@@ -43,6 +41,7 @@ export default {
       return {
         token,
         email: user.email,
+        username: user.username,
       };
     } else {
       throw new Error("Cannot authenticate");

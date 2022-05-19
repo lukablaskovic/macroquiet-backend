@@ -10,15 +10,14 @@ const app = express();
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
 
-const port = 3000;
+const port = 4000;
 
 app.get("/tajna", [auth.verify], (req, res) => {
-  res.json({ message: "ovo je tajna " + req.jwt.email });
+  res.json(req.jwt.email);
 });
 
 app.post("/auth", async (req, res) => {
   let userCredentials = req.body;
-  console.log(userCredentials);
 
   try {
     let result = await auth.authenticateUser(
@@ -46,10 +45,11 @@ app.post("/users", async (req, res) => {
 
 app.get("/storage", async (req, res) => {
   let query = String(req.query.data);
-  console.log(query);
+
   let db = await connect();
   let cursor = await db.collection(query).find();
   let results = await cursor.toArray();
+
   res.json(results);
 });
 
