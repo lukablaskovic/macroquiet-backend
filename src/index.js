@@ -22,7 +22,8 @@ app.post("/auth", async (req, res) => {
   try {
     let result = await auth.authenticateUser(
       userCredentials.email,
-      userCredentials.password
+      userCredentials.password,
+      userCredentials.rememberMe
     );
     res.json(result);
   } catch (e) {

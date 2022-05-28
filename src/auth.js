@@ -28,15 +28,19 @@ export default {
       }
     }
   },
-  async authenticateUser(email, password) {
+  async authenticateUser(email, password, rememberMe) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
     if (user && user.password && (await checkUser(password, user.password))) {
       delete user.password;
+
+      let tokenDuration = "1h";
+      if (rememberMe) tokenDuration = "30d";
       let token = jwt.sign(user, process.env.JWT_SECRET, {
         algorithm: "HS512",
-        expiresIn: "1 week",
+        expiresIn: tokenDuration,
       });
+
       console.log("Successful login!");
       return {
         token,
