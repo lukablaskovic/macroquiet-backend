@@ -1,3 +1,4 @@
+//Temporary here... will be in database
 let storage = {
   gameCards: [
     {
