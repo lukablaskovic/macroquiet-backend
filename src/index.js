@@ -10,7 +10,7 @@ const app = express();
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
 
-const port = 4000;
+const port = process.env.PORT;
 
 //JWT token
 app.get("/tajna", [auth.verify], (req, res) => {
