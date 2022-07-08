@@ -5,11 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "heroku-postbuild": "npm run build",
     "serve": "nodemon --exec babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d build",
-    "start": "node build/index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
