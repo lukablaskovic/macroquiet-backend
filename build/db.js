@@ -1,17 +1,16 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
 
-var _mongodb = _interopRequireDefault(require("mongodb"));
+var _require = require("mongodb"),
+    MongoClient = _require.MongoClient;
 
 var connection_string = process.env.CONNECTION_STRING || "mongodb+srv://admin:6VKpRNUZ2cvEY9xK@cluster0.bhxeo.mongodb.net/stranded-away"; // Create a new MongoClient
 
-var client = new _mongodb["default"].MongoClient(connection_string);
+var client = new MongoClient(connection_string);
 var db = null; // eksportamo Promise koji resolva na konekciju
 
 var _default = function _default() {

@@ -1,10 +1,10 @@
-import mongodb from "mongodb";
+const { MongoClient } = require("mongodb");
 
 let connection_string =
   process.env.CONNECTION_STRING ||
   "mongodb+srv://admin:6VKpRNUZ2cvEY9xK@cluster0.bhxeo.mongodb.net/stranded-away";
 // Create a new MongoClient
-const client = new mongodb.MongoClient(connection_string);
+const client = new MongoClient(connection_string);
 let db = null;
 // eksportamo Promise koji resolva na konekciju
 export default () => {
