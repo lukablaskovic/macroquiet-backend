@@ -9,7 +9,7 @@
 ### Autori i zaduženja
 
 -   Alesandro Žužić (azuzic@unipu.hr) - Moduli za: dodavanje vijesti, achivements, scoreboard.
--   Luka Blašković (lblaskovi@unipu.hr) - Implementacija autentifikacije, spajanje na Unity API i komunikacija, MongoDB, admin sučelje, Forum
+-   Luka Blašković (lblaskovi@unipu.hr) - Implementacija autentifikacije, spajanje na Unity API i komunikacija, MongoDB, Admin sučelje, Forum
 
 ### Kratki opis funkcionalnosti
 Projekt se sastoji od igrice Stranded Away koja se izrađuje u Unity-u (DESKTOP igra), korisničkog sučelja na webu i backenda s odgovarajućom MongoDB bazom podataka. U grupu korisnika spadaju svi igrači koji bi htjeli igrati ovu igru.
