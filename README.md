@@ -4,6 +4,7 @@
 
 ### Poveznica na aplikaciju
 - https://macroquiet.com/ (Front-end)
+- https://stranded-away.herokuapp.com/ (Back-end)
 
 ### Autori i zaduženja
 
