@@ -2,7 +2,7 @@
   "name": "stranded-away-backend",
   "version": "1.0.0",
   "description": "Backend for Stranded Away video game project",
-  "main": "./dist/index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "build": "babel src -d build",
