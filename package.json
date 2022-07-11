@@ -2,11 +2,10 @@
   "name": "stranded-away-backend",
   "version": "1.0.0",
   "description": "Backend for Stranded Away video game project",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "type": "module",
   "scripts": {
     "build": "babel src -d build",
-    "heroku-postbuild": "npm install",
     "start": "node build/index.js",
     "serve": "nodemon --exec babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
