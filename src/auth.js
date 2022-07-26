@@ -36,7 +36,7 @@ export default {
 
       let tokenDuration = "1h";
       if (rememberMe) tokenDuration = "30d";
-      let token = jwt.sign(user, process.env.JWT_SECRET, {
+      let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
         algorithm: "HS512",
         expiresIn: tokenDuration,
       });
@@ -84,6 +84,5 @@ async function encrypt(plainTextPassword) {
 
 async function checkUser(password, passwordHash) {
   const match = await bcrypt.compare(password, passwordHash);
-  console.log(match);
   return match;
 }

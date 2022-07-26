@@ -45,7 +45,7 @@ app.post("/users", async (req, res) => {
   }
   res.json({ id: id });
 });
-
+//GET,POST, PUT i DELETE
 //Fetch from database storage
 app.get("/storage", async (req, res) => {
   let query = String(req.query.data);
@@ -67,8 +67,8 @@ app.listen(port, () => {
 //****User interface****//
 
 //user profile
-app.get("/u", (req, res) => res.json(data.currentUser));
-app.get("/u/:username", (req, res) => res.json(data.oneUser));
+app.get("/user", (req, res) => res.json(data.currentUser));
+app.get("/user/:username", (req, res) => res.json(data.oneUser));
 
 //available games
 app.get("/games:gameName", (req, res) => res.json(data.gameDetails));
