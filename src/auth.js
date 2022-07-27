@@ -35,7 +35,7 @@ export default {
       delete user.password;
 
       let tokenDuration = "1h";
-      if (rememberMe) tokenDuration = "30d";
+      if (rememberMe) tokenDuration = "7d";
       let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
         algorithm: "HS512",
         expiresIn: tokenDuration,
