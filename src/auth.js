@@ -1,6 +1,7 @@
 import connect from "./db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { response } from "express";
 
 //Kreiranje indexa prilikom boot-a aplikacije
 createIndexOnLoad();
@@ -36,7 +37,7 @@ export default {
 
       let tokenDuration = "1h";
       if (rememberMe) tokenDuration = "7d";
-      let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
+      let token = jwt.sign(user, process.env.JWT_SECRET, { 
         algorithm: "HS512",
         expiresIn: tokenDuration,
       });
@@ -49,6 +50,55 @@ export default {
       };
     } else {
       throw new Error("Cannot authenticate");
+    }
+  },
+  async changeUserPassword(username, old_password, new_password) {
+    let db = await connect();
+    let user = await db.collection("users").findOne({username: username});
+
+    if (user && user.password && await checkUser(old_password, user.password)) {
+        let new_password_hashed = await encrypt(new_password);
+        let result = await db.collection("users").updateOne(
+            { _id: user._id },
+            { 
+                $set: {
+                    password: new_password_hashed
+                }
+            }
+        )
+        return result.modifiedCount == 1
+    }
+  },
+  async changeUserUsername(old_username, new_username) {
+    let db = await connect();
+    let user = await db.collection("users").findOne({username: old_username});
+
+    if (user) {
+        let result = await db.collection("users").updateOne(
+            { _id: user._id },
+            { 
+                $set: {
+                    username: new_username
+                }
+            }
+        )
+        return result.modifiedCount == 1
+    }
+  },
+  async changeUserEmail(username, new_email) {
+    let db = await connect();
+    let user = await db.collection("users").findOne({username: username});
+
+    if (user) {
+        let result = await db.collection("users").updateOne(
+            { _id: user._id },
+            { 
+                $set: {
+                    email: new_email
+                }
+            }
+        )
+        return result.modifiedCount == 1
     }
   },
   verify(req, res, next) {
