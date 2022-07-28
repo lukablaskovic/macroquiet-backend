@@ -17,6 +17,18 @@ app.get("/tajna", [auth.verify], (req, res) => {
   res.json(req.jwt.email);
 });
 
+//GET JWT token
+app.post("/user/token", [auth.verify], (req, res) => {
+    let userdata = req.body;
+    try {
+        let tokenData = auth.setToken(userdata.username, userdata.email);
+        res.json(tokenData);
+    }
+    catch (e) {
+         res.status(401).json({ error: e.message });
+    }
+});
+
 //Authenticate existing user
 app.post("/auth", async (req, res) => {
   let userCredentials = req.body;
@@ -36,10 +48,9 @@ app.post("/auth", async (req, res) => {
 //Change user password
 app.patch("/user/password", [auth.verify], async (req, res)=> {
     let changes = req.body; 
-    let username = req.jwt.username;
     
-    if (changes.new_password && changes.old_password) {
-        let result = await auth.changeUserPassword(username, changes.old_password, changes.new_password)
+    if (changes.username && changes.new_password && changes.old_password) {
+        let result = await auth.changeUserPassword(changes.username, changes.old_password, changes.new_password)
 
         if (result) {
             res.status(201).send();
@@ -56,10 +67,9 @@ app.patch("/user/password", [auth.verify], async (req, res)=> {
 //Change user username
 app.patch("/user/username", [auth.verify], async (req, res)=> {
     let changes = req.body; 
-
+    let old_username = req.jwt.username;
     if (changes) {
-        let result = await auth.changeUserUsername(changes.old_username, changes.new_username)
-        
+        let result = await auth.changeUserUsername(old_username, changes.new_username)
         if (result) {
             res.status(201).send();
         }
@@ -75,9 +85,9 @@ app.patch("/user/username", [auth.verify], async (req, res)=> {
 //Change user email
 app.patch("/user/email", [auth.verify], async (req, res)=> {
     let changes = req.body; 
-
+    let username = req.jwt.username;
     if (changes) {
-        let result = await auth.changeUserEmail(changes.username, changes.new_email)
+        let result = await auth.changeUserEmail(username, changes.new_email)
         
         if (result) {
             res.status(201).send();

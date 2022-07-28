@@ -7,6 +7,24 @@ import { response } from "express";
 createIndexOnLoad();
 
 export default {
+  setToken(username, email) {
+      let user = {
+        username: username,
+        email: email,
+      }
+      
+      let tokenDuration = "7d";
+        let token = jwt.sign(user, process.env.JWT_SECRET, {
+            algorithm: "HS512",
+            expiresIn: tokenDuration,
+        });   
+        let tokenData = {
+            token,
+            username: username,
+            email: email,
+        }
+        return tokenData;
+  },
   async registerUser(userData) {
     let db = await connect();
 
@@ -37,11 +55,10 @@ export default {
 
       let tokenDuration = "1h";
       if (rememberMe) tokenDuration = "7d";
-      let token = jwt.sign(user, process.env.JWT_SECRET, { 
+      let token = jwt.sign(user, process.env.JWT_SECRET, {
         algorithm: "HS512",
         expiresIn: tokenDuration,
       });
-
       console.log("Successful login!");
       return {
         token,
