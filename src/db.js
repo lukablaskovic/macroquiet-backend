@@ -9,12 +9,6 @@ let db = null;
 // eksportamo Promise koji resolva na konekciju
 export default () => {
   return new Promise((resolve, reject) => {
-    // ako smo inicijalizirali bazu i klijent je još uvijek spojen
-    /*
-    if (db && client.isConnected()) {
-      resolve(db);
-    } else {
-      */
     client.connect((err) => {
       if (err) {
         reject("Spajanje na bazu nije uspjelo:" + err);
@@ -24,6 +18,5 @@ export default () => {
         resolve(db);
       }
     });
-    //}
   });
 };
