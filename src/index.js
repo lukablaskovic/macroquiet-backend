@@ -5,7 +5,21 @@ import express from "express";
 import connect from "./db.js";
 import cors from "cors";
 import auth from "./auth.js";
+
+import fs from 'fs';
+import path from 'path';
+import bodyParser from 'body-parser';    //The module “body-parser” enables reading (parsing) HTTP-POST data.
+import upload from './imageUpload.js';
+import { async } from "regenerator-runtime";
+
 const app = express();
+
+// Set up EJS
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// Set EJS as templating engine 
+app.set("view engine", "ejs");
 
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
@@ -126,6 +140,18 @@ app.get("/storage", async (req, res) => {
   res.json(results);
 });
 
+app.get("/image", async(req, res) => {
+    let data = await auth.getImage(req, res); 
+    /*console.log(data); 
+    const buffer = Buffer.from(data, "base64");
+    res.writeHead(200, { 
+        'Content-Type': 'image/png',
+        'Content-Length': buffer.length 
+    });
+    res.end(buffer);*/
+    res.json(data);
+});
+
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
@@ -166,3 +192,30 @@ app.post("/games", (req, res) => {
 });
 
 //+ backend dio za povezivanje/autentifikaciju/modulaciju podataka unutar same Unity igre
+
+//POST handler for processing the uploaded file
+var imgModel = require('./model').default;
+app.post('/upload', upload.single('image'), (req, res, next) => {
+    let localPath = path.join(__dirname.slice(0, -3) + 'uploads/' + req.file.filename);
+    var obj = {
+        name: req.body.name,
+        desc: req.body.desc,
+        img: {
+            data: fs.readFileSync(localPath),
+            contentType: 'image/png'
+        }
+    }
+    imgModel.create(obj, (err, item) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            item.save();
+            let data = item;
+            fs.unlink(localPath, err => {
+                if (err) throw err;
+            });
+            res.status(201).send("Image { " + data.name + " } with id { " + data._id + " } succesfully uploaded!");
+        }
+    });
+});

@@ -22,7 +22,7 @@ export default () => {
         db = client.db("stranded-away");
         resolve(db);
       }
-    });
+    }); 
     //}
   });
 };

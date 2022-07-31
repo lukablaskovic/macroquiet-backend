@@ -29,6 +29,20 @@ var port = process.env.PORT || 3000; //JWT token
 
 app.get("/tajna", [_auth["default"].verify], function (req, res) {
   res.json(req.jwt.email);
+}); //GET JWT token
+
+app.post("/user/token", [_auth["default"].verify], function (req, res) {
+  var userdata = req.body;
+
+  try {
+    var tokenData = _auth["default"].setToken(userdata.username, userdata.email);
+
+    res.json(tokenData);
+  } catch (e) {
+    res.status(401).json({
+      error: e.message
+    });
+  }
 }); //Authenticate existing user
 
 app.post("/auth", /*#__PURE__*/function () {
@@ -67,77 +81,95 @@ app.post("/auth", /*#__PURE__*/function () {
   return function (_x, _x2) {
     return _ref.apply(this, arguments);
   };
-}()); //Register new user
+}()); //Change user password
 
-app.post("/users", /*#__PURE__*/function () {
+app.patch("/user/password", [_auth["default"].verify], /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-    var user, id;
+    var changes, result;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            user = req.body;
-            _context2.prev = 1;
+            changes = req.body;
+
+            if (!(changes.username && changes.new_password && changes.old_password)) {
+              _context2.next = 8;
+              break;
+            }
+
             _context2.next = 4;
-            return _auth["default"].registerUser(user);
+            return _auth["default"].changeUserPassword(changes.username, changes.old_password, changes.new_password);
 
           case 4:
-            id = _context2.sent;
-            _context2.next = 11;
+            result = _context2.sent;
+
+            if (result) {
+              res.status(201).send();
+            } else {
+              res.status(500).json({
+                error: "Cannot change password!"
+              });
+            }
+
+            _context2.next = 9;
             break;
 
-          case 7:
-            _context2.prev = 7;
-            _context2.t0 = _context2["catch"](1);
-            res.status(500).json({
-              error: _context2.t0.message
-            });
-            return _context2.abrupt("return");
-
-          case 11:
-            res.json({
-              id: id
+          case 8:
+            res.status(400).json({
+              error: "Wrong query!"
             });
 
-          case 12:
+          case 9:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[1, 7]]);
+    }, _callee2);
   }));
 
   return function (_x3, _x4) {
     return _ref2.apply(this, arguments);
   };
-}()); //Fetch from database storage
+}()); //Change user username
 
-app.get("/storage", /*#__PURE__*/function () {
+app.patch("/user/username", [_auth["default"].verify], /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var query, db, cursor, results;
+    var changes, old_username, result;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            query = String(req.query.data);
-            _context3.next = 3;
-            return (0, _db["default"])();
+            changes = req.body;
+            old_username = req.jwt.username;
 
-          case 3:
-            db = _context3.sent;
-            _context3.next = 6;
-            return db.collection(query).find();
+            if (!changes) {
+              _context3.next = 9;
+              break;
+            }
 
-          case 6:
-            cursor = _context3.sent;
-            _context3.next = 9;
-            return cursor.toArray();
+            _context3.next = 5;
+            return _auth["default"].changeUserUsername(old_username, changes.new_username);
+
+          case 5:
+            result = _context3.sent;
+
+            if (result) {
+              res.status(201).send();
+            } else {
+              res.status(500).json({
+                error: "Cannot change username!"
+              });
+            }
+
+            _context3.next = 10;
+            break;
 
           case 9:
-            results = _context3.sent;
-            res.json(results);
+            res.status(400).json({
+              error: "Wrong query!"
+            });
 
-          case 11:
+          case 10:
           case "end":
             return _context3.stop();
         }
@@ -148,18 +180,150 @@ app.get("/storage", /*#__PURE__*/function () {
   return function (_x5, _x6) {
     return _ref3.apply(this, arguments);
   };
+}()); //Change user email
+
+app.patch("/user/email", [_auth["default"].verify], /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
+    var changes, username, result;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            changes = req.body;
+            username = req.jwt.username;
+
+            if (!changes) {
+              _context4.next = 9;
+              break;
+            }
+
+            _context4.next = 5;
+            return _auth["default"].changeUserEmail(username, changes.new_email);
+
+          case 5:
+            result = _context4.sent;
+
+            if (result) {
+              res.status(201).send();
+            } else {
+              res.status(500).json({
+                error: "Cannot change email!"
+              });
+            }
+
+            _context4.next = 10;
+            break;
+
+          case 9:
+            res.status(400).json({
+              error: "Wrong query!"
+            });
+
+          case 10:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+
+  return function (_x7, _x8) {
+    return _ref4.apply(this, arguments);
+  };
+}()); //Register new user
+
+app.post("/users", /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+    var user, id;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            user = req.body;
+            _context5.prev = 1;
+            _context5.next = 4;
+            return _auth["default"].registerUser(user);
+
+          case 4:
+            id = _context5.sent;
+            _context5.next = 11;
+            break;
+
+          case 7:
+            _context5.prev = 7;
+            _context5.t0 = _context5["catch"](1);
+            res.status(500).json({
+              error: _context5.t0.message
+            });
+            return _context5.abrupt("return");
+
+          case 11:
+            res.json({
+              id: id
+            });
+
+          case 12:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, null, [[1, 7]]);
+  }));
+
+  return function (_x9, _x10) {
+    return _ref5.apply(this, arguments);
+  };
+}()); //GET,POST, PUT i DELETE
+//Fetch from database storage
+
+app.get("/storage", /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
+    var query, db, cursor, results;
+    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            query = String(req.query.data);
+            _context6.next = 3;
+            return (0, _db["default"])();
+
+          case 3:
+            db = _context6.sent;
+            _context6.next = 6;
+            return db.collection(query).find();
+
+          case 6:
+            cursor = _context6.sent;
+            _context6.next = 9;
+            return cursor.toArray();
+
+          case 9:
+            results = _context6.sent;
+            res.json(results);
+
+          case 11:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6);
+  }));
+
+  return function (_x11, _x12) {
+    return _ref6.apply(this, arguments);
+  };
 }());
 app.listen(port, function () {
   console.log("Listening on ".concat(port));
 }); //REST MOCK
-//TO BE IMPLEMENTED
+//TO BE IMPLEMENTED 
 //****User interface****//
 //user profile
 
-app.get("/u", function (req, res) {
+app.get("/user", function (req, res) {
   return res.json(data.currentUser);
 });
-app.get("/u/:username", function (req, res) {
+app.get("/user/:username", function (req, res) {
   return res.json(data.oneUser);
 }); //available games
 
