@@ -145,17 +145,6 @@ export default {
       return res.status(401).send(); //Ako dode do bilo kakvog excpetiona, vrati 401
     }
   },
-  /*
-  async getImage(req, res) {
-    let db = await connect();
-    try {
-      let image = await db.collection("images").findOne({ name: "UserTrophy" });
-      return image.img.data;
-    } catch (e) {
-      console.log(e);
-    }
-  },
-  */
 };
 
 const saltRounds = 10;
