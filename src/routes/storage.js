@@ -1,67 +1,24 @@
-import fs from "fs";
-import path from "path";
 import connect from "../db.js";
 
 import "dotenv/config";
-import { Schema, model } from 'mongoose';
-
-// Model used for uploading
-var imageSchema = new Schema({
-    name: { type: String, require: false, index: true, unique: false, sparse: true},
-    desc: { type: String, require: false, index: true, unique: false, sparse: true},
-    img:
-    {
-        data: Buffer,
-        contentType: String
-    }
-});
-   
-var imgModel = new model('Image', imageSchema);
-
-var multer = require("multer"); //Multer is nodejs middleware used for uploading files.
-
-var storage = multer.diskStorage({
-  destination: './src/routes/uploads',
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now());
-  },
-});
-
-var imageUpload = multer({ storage: storage });
+import Image from "./image.js";
  
 let upload = async (req, res) => { 
-  let localPath = path.join(
-    __dirname + "/uploads/" + req.body.name
-  );
-  var obj = {
-    name: req.body.name,
-    desc: req.body.desc,
-    img: {
-      data: fs.readFileSync(localPath),
-      contentType: "image/png",
-    },
-  };
-
-  imgModel.create(obj, (err, item) => {
-    if (err) {
-        res.status(400).json({ error: "Upload error: " + e });
-    } else {
-        item.save();
-        let data = item;
-        fs.unlink(localPath, (err) => {
-        if (err) throw err;
-        });
-        res
-        .status(201)
-        .send(
-            "Image { " +
-            data.name +
-            " } with id { " +
-            data._id +
-            " } succesfully uploaded!"
-        );
-    }
-  });
+  let {name, desc, img} = req.body;  
+  let image = new Image({
+        name,
+        desc,
+        img
+  })
+  try {
+    let newImage = await image.save();
+    let response = "Succesfully uploaded image { "+ newImage.name +" } with id { " + newImage._id +" }";
+    console.log(response);
+    res.status(201).send(response); 
+  }
+  catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 };
 
 let download = async (req, res) => {
@@ -77,4 +34,4 @@ let download = async (req, res) => {
   }
 }
 
-export default { imageUpload, upload, download };
+export default { upload, download };

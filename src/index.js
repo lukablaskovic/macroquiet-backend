@@ -13,8 +13,8 @@ import bodyParser from "body-parser";
 const app = express();
 
 // Set up EJS
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit: 500000}));
 
 // SEt up CPRS
 app.use(cors());            //Omoguci CORS na svim rutama
@@ -36,7 +36,7 @@ app.patch("/user/email", [auth.verify], user.changeEmail);
 app.patch("/user/password", [auth.verify], user.changePassword); 
 
 //Storage
-app.post("/upload/image", [storage.imageUpload.single('image')], storage.upload);
+app.post("/upload/image", storage.upload);
 app.get("/download/image", storage.download);
 
 //Authenticate existing user
