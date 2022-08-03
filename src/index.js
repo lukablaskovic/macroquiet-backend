@@ -22,6 +22,14 @@ app.use(
     parameterLimit: 500000,
   })
 );
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 // SEt up CPRS
 app.use(cors()); //Omoguci CORS na svim rutama
