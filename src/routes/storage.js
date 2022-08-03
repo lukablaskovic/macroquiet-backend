@@ -1,6 +1,6 @@
 import connect from "../db.js";
 import { ObjectID } from "mongodb";
-import "dotenv/config";
+
 let bodyID = "";
 
 function setBodyID(id) {
