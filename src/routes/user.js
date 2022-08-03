@@ -1,4 +1,6 @@
 import auth from "../auth";
+import connect from "../db.js";
+
 //Register new user
 let register = async (req, res) => {
   let user = req.body;
@@ -13,6 +15,25 @@ let register = async (req, res) => {
   res.json({ id: id });
 };
 
+//Get user data from db
+let getData = async (req, res) => {
+  let query = String(req.query.username);
+  try {
+    let db = await connect();
+    let user = await db.collection("users").findOne({ username: query });
+    let userData = {
+      username: user.username,
+      email: user.email,
+      profile: user.profile,
+    };
+    res.status(201).send({ userData });
+    return;
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+    return;
+  }
+};
+
 //Change user username
 let changeUsername = async (req, res) => {
   let changes = req.body;
@@ -24,11 +45,14 @@ let changeUsername = async (req, res) => {
     );
     if (result) {
       res.status(201).send();
+      return;
     } else {
       res.status(500).json({ error: "Cannot change username!" });
+      return;
     }
   } else {
     res.status(400).json({ error: "Wrong query!" });
+    return;
   }
 };
 
@@ -41,11 +65,14 @@ let changeEmail = async (req, res) => {
 
     if (result) {
       res.status(201).send();
+      return;
     } else {
       res.status(500).json({ error: "Cannot change email!" });
+      return;
     }
   } else {
     res.status(400).json({ error: "Wrong query!" });
+    return;
   }
 };
 
@@ -62,12 +89,21 @@ let changePassword = async (req, res) => {
 
     if (result) {
       res.status(201).send();
+      return;
     } else {
       res.status(500).json({ error: "Cannot change password!" });
+      return;
     }
   } else {
     res.status(400).json({ error: "Wrong query!" });
+    return;
   }
 };
 
-export default { register, changeUsername, changeEmail, changePassword };
+export default {
+  register,
+  changeUsername,
+  changeEmail,
+  changePassword,
+  getData,
+};

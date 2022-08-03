@@ -6,19 +6,26 @@ import auth from "./auth.js";
 
 import user from "./routes/user";
 import token from "./routes/token";
-import storage from "./routes/storage"
+import storage from "./routes/storage";
+import profile from "./routes/profile";
 
 import bodyParser from "body-parser";
 
 const app = express();
 
 // Set up EJS
-app.use(bodyParser.json({limit: "50mb"}));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit: 500000}));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 500000,
+  })
+);
 
 // SEt up CPRS
-app.use(cors());            //Omoguci CORS na svim rutama
-app.use(express.json());    //automatski dekodiraj JSON poruke
+app.use(cors()); //Omoguci CORS na svim rutama
+app.use(express.json()); //automatski dekodiraj JSON poruke
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
@@ -31,13 +38,23 @@ app.post("/user/token", [auth.verify], token.updateToken);
 
 //User
 app.post("/user", user.register);
+app.get("/user", [auth.verify], user.getData);
 app.patch("/user/username", [auth.verify], user.changeUsername);
 app.patch("/user/email", [auth.verify], user.changeEmail);
-app.patch("/user/password", [auth.verify], user.changePassword); 
+app.patch("/user/password", [auth.verify], user.changePassword);
+
+//Profile
+app.patch("/user/profile/coverImage", [auth.verify], profile.updateCoverImage);
+app.patch(
+  "/user/profile/avatarImage",
+  [auth.verify],
+  profile.updateAvatarImage
+);
 
 //Storage
-app.post("/upload/image", storage.upload);
-app.get("/download/image", storage.download);
+app.post("/upload/image", [auth.verify], storage.upload);
+app.get("/download/image", [auth.verify], storage.download);
+app.delete("/remove/image", [auth.verify], storage.remove);
 
 //Authenticate existing user
 app.post("/auth", async (req, res) => {

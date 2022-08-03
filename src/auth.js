@@ -19,7 +19,7 @@ export default {
     };
 
     let tokenDuration = "7d";
-    let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
+    let token = jwt.sign(user, process.env.JWT_SECRET, {
       algorithm: "HS512",
       expiresIn: tokenDuration,
     });
@@ -60,7 +60,7 @@ export default {
 
       let tokenDuration = "1h";
       if (rememberMe) tokenDuration = "7d";
-      let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
+      let token = jwt.sign(user, process.env.JWT_SECRET, {
         algorithm: "HS512",
         expiresIn: tokenDuration,
       });
@@ -132,13 +132,11 @@ export default {
       let authorization = req.headers.authorization.split(" ");
       let type = authorization[0];
       let token = authorization[1];
-      console.log(type, token);
       if (type !== "Bearer") {
         res.status(401).send(); //Ako nije  bearer, vrati 401
         return false;
       } else {
-        req.jwt = jwt.verify(token, process.env.JWT_SECRET || "much_secret"); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
-        console.log(req.jwt);
+        req.jwt = jwt.verify(token, process.env.JWT_SECRET); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
         return next();
       }
     } catch (e) {
