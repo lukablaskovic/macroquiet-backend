@@ -17,7 +17,6 @@ let register = async (req, res) => {
 
 //Get user data from db
 let getData = async (req, res) => {
-  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   let query = String(req.query.username);
   try {
     let db = await connect();

@@ -30,7 +30,7 @@ app.use(express.json()); //automatski dekodiraj JSON poruke
 // Set EJS as templating engine
 app.set("view engine", "ejs");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 //Token
 app.get("/token", [auth.verify], token.getToken);
@@ -74,7 +74,6 @@ app.post("/auth", async (req, res) => {
 
 //Fetch from database storage
 app.get("/storage", async (req, res) => {
-  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   let query = String(req.query.data);
 
   let db = await connect();
