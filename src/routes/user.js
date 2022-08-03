@@ -1,6 +1,5 @@
 import auth from "../auth";
 import connect from "../db.js";
-
 import "dotenv/config";
 
 //Register new user

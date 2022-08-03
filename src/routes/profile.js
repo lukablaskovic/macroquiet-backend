@@ -1,5 +1,6 @@
 import connect from "../db.js";
 import storage from "./storage";
+import "dotenv/config";
 //Change user profile cover image
 let updateCoverImage = async (req, res) => {
   let changes = req.body.id;
