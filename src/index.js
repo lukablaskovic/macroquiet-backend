@@ -13,6 +13,10 @@ import bodyParser from "body-parser";
 
 const app = express();
 
+// SEt up CPRS
+app.use(cors()); //Omoguci CORS na svim rutama
+app.use(express.json()); //automatski dekodiraj JSON poruke
+/*
 // Set up EJS
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
@@ -21,11 +25,7 @@ app.use(
     extended: true,
     parameterLimit: 500000,
   })
-);
-
-// SEt up CPRS
-app.use(cors()); //Omoguci CORS na svim rutama
-app.use(express.json()); //automatski dekodiraj JSON poruke
+);*/
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
