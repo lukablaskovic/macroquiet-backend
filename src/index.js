@@ -18,12 +18,12 @@ app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
 
 // Set up EJS
-app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.json({ limit: "500mb" }));
 app.use(
   bodyParser.urlencoded({
-    limit: "50mb",
+    limit: "500mb",
     extended: true,
-    parameterLimit: 500000000,
+    parameterLimit: 5000000000,
   })
 );
 
