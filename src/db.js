@@ -1,4 +1,5 @@
 const { MongoClient } = require("mongodb");
+import "dotenv/config";
 
 let connection_string = process.env.CONNECTION_STRING;
 
