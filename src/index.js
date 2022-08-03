@@ -9,7 +9,7 @@ import token from "./routes/token";
 import storage from "./routes/storage";
 import profile from "./routes/profile";
 
-import bodyParser from "body-parser";
+//import bodyParser from "body-parser";
 
 const app = express();
 
@@ -25,10 +25,11 @@ app.use(
     extended: true,
     parameterLimit: 500000,
   })
-);*/
+);
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
+*/
 
 const port = process.env.PORT;
 
