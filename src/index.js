@@ -22,20 +22,6 @@ app.use(
     parameterLimit: 500000,
   })
 );
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
-let corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
 
 // SEt up CPRS
 app.use(cors()); //Omoguci CORS na svim rutama
@@ -88,6 +74,7 @@ app.post("/auth", async (req, res) => {
 
 //Fetch from database storage
 app.get("/storage", async (req, res) => {
+  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   let query = String(req.query.data);
 
   let db = await connect();

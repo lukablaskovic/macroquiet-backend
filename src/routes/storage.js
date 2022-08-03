@@ -74,6 +74,7 @@ let storeImage = async (db, frgIDs, name, img) => {
 };
 
 let upload = async (req, res) => {
+  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   let { name, img } = req.body; //retrieving image name and image base64 data
   let imgSize = encodeURI(img).split(/%..|./).length - 1; //calculating image size
   try {
@@ -109,6 +110,7 @@ let upload = async (req, res) => {
 };
 
 let download = async (req, res) => {
+  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   if (req.query == undefined) return;
   let query = String(req.query.id);
   let db = await connect();
@@ -141,6 +143,7 @@ let download = async (req, res) => {
 };
 
 let remove = async (req, res) => {
+  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
   let query;
   if (bodyID == "") query = String(req.query.id);
   else query = bodyID;
