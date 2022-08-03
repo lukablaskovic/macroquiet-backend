@@ -1,6 +1,8 @@
 import auth from "../auth";
 import connect from "../db.js";
 
+import "dotenv/config";
+
 //Register new user
 let register = async (req, res) => {
   let user = req.body;
