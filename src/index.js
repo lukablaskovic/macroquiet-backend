@@ -30,6 +30,12 @@ app.use((req, res, next) => {
   );
   next();
 });
+let corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // SEt up CPRS
 app.use(cors()); //Omoguci CORS na svim rutama
