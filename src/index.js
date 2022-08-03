@@ -13,19 +13,19 @@ import bodyParser from "body-parser";
 
 const app = express();
 
+// Set up EJS
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 500000,
+  })
+);
+
 // Set up CORS
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
-
-// Set up EJS
-app.use(bodyParser.json({ limit: "500mb" }));
-app.use(
-  bodyParser.urlencoded({
-    limit: "500mb",
-    extended: true,
-    parameterLimit: 5000000000000000,
-  })
-);
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
