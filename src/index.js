@@ -9,14 +9,14 @@ import token from "./routes/token";
 import storage from "./routes/storage";
 import profile from "./routes/profile";
 
-//import bodyParser from "body-parser";
+import bodyParser from "body-parser";
 
 const app = express();
 
 // SEt up CPRS
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
-/*
+
 // Set up EJS
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
@@ -27,9 +27,17 @@ app.use(
   })
 );
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "macroquiet.com"); // update to match the domain you will make the request from
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 // Set EJS as templating engine
 app.set("view engine", "ejs");
-*/
 
 const port = process.env.PORT;
 
