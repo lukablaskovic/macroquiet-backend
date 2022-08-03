@@ -13,7 +13,7 @@ import bodyParser from "body-parser";
 
 const app = express();
 
-// SEt up CPRS
+// Set up CORS
 app.use(cors()); //Omoguci CORS na svim rutama
 app.use(express.json()); //automatski dekodiraj JSON poruke
 
