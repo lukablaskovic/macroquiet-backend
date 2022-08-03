@@ -20,7 +20,7 @@ export default {
     };
 
     let tokenDuration = "7d";
-    let token = jwt.sign(user, process.env.JWT_SECRET, {
+    let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
       algorithm: "HS512",
       expiresIn: tokenDuration,
     });
@@ -38,6 +38,10 @@ export default {
       username: userData.username,
       email: userData.email,
       password: await encrypt(userData.password),
+      profile: {
+        coverImageID: "",
+        avatarImageID: "",
+      },
     };
 
     try {
@@ -61,7 +65,7 @@ export default {
 
       let tokenDuration = "1h";
       if (rememberMe) tokenDuration = "7d";
-      let token = jwt.sign(user, process.env.JWT_SECRET, {
+      let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
         algorithm: "HS512",
         expiresIn: tokenDuration,
       });
@@ -137,7 +141,7 @@ export default {
         res.status(401).send(); //Ako nije  bearer, vrati 401
         return false;
       } else {
-        req.jwt = jwt.verify(token, process.env.JWT_SECRET); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
+        req.jwt = jwt.verify(token, process.env.JWT_SECRET || "much_secret"); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
         return next();
       }
     } catch (e) {

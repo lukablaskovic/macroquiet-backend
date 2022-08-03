@@ -3,7 +3,7 @@ import storage from "./storage";
 //Change user profile cover image
 let updateCoverImage = async (req, res) => {
   let changes = req.body.id;
-  let username = "azuzic"; //req.jwt.username;
+  let username = req.jwt.username;
   if (changes) {
     try {
       let db = await connect();
@@ -39,7 +39,7 @@ let updateCoverImage = async (req, res) => {
 //Change user profile avatar image
 let updateAvatarImage = async (req, res) => {
   let changes = req.body.id;
-  let username = "azuzic"; //req.jwt.username;
+  let username = req.jwt.username;
   if (changes) {
     try {
       let db = await connect();
@@ -47,6 +47,7 @@ let updateAvatarImage = async (req, res) => {
       let user = await db.collection("users").findOne({ username: username });
       if (user) {
         //delete previous user profile avatar image
+        console.log(user.profile.avatarImageID);
         storage.setBodyID(user.profile.avatarImageID);
         await storage.remove();
         //set new user profile avatar ID

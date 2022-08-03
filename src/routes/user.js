@@ -26,7 +26,7 @@ let getData = async (req, res) => {
       email: user.email,
       profile: user.profile,
     };
-    res.status(201).send({ userData });
+    res.json({ userData });
     return;
   } catch (e) {
     res.status(500).json({ error: e.message });

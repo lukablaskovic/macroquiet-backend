@@ -1,7 +1,7 @@
+import { ObjectId } from "mongodb";
 import connect from "../db.js";
-import { ObjectID } from "mongodb";
 
-let bodyID = "";
+let bodyID = null;
 
 function setBodyID(id) {
   bodyID = id;
@@ -107,14 +107,22 @@ let upload = async (req, res) => {
 };
 
 let download = async (req, res) => {
-  if (req.query == undefined) return;
+  console.log(req.query);
+  if (req.query.id == "")
+    try {
+      res.status(201).send("");
+      return;
+    } catch {
+      res.status(400).json({ error: "Download error: " + e });
+      return;
+    }
   let query = String(req.query.id);
   let db = await connect();
   try {
     // find image with id
     let image = await db
       .collection("images")
-      .findOne({ _id: new ObjectID(query) });
+      .findOne({ _id: new ObjectId(query) });
 
     if (image.img != "fragmented") {
       res.status(201).json(image); // return image if not fragmented
@@ -125,7 +133,7 @@ let download = async (req, res) => {
       for (let i = 0; i < image.fragmentsIDs.length; i++) {
         let fragment = await db
           .collection("imageFragments")
-          .findOne({ _id: new ObjectID(image.fragmentsIDs[i]) });
+          .findOne({ _id: new ObjectId(image.fragmentsIDs[i]) });
         image.img += fragment.frg;
       }
 
@@ -140,7 +148,8 @@ let download = async (req, res) => {
 
 let remove = async (req, res) => {
   let query;
-  if (bodyID == "") query = String(req.query.id);
+  console.log(bodyID);
+  if (bodyID == null) query = String(req.query.id);
   else query = bodyID;
 
   let db = await connect();
@@ -148,15 +157,15 @@ let remove = async (req, res) => {
     //find image with id
     let image = await db
       .collection("images")
-      .findOne({ _id: new ObjectID(query) });
+      .findOne({ _id: new ObjectId(query) });
     if (image == null) return;
     if (image.img != "fragmented") {
       // delete image if not fragmented
-      await db.collection("images").deleteOne({ _id: new ObjectID(query) });
+      await db.collection("images").deleteOne({ _id: new ObjectId(query) });
       console.log(
         "Removed image { " + image.name + " } with id { " + query + " }"
       );
-      if (bodyID != "") return;
+      if (bodyID != null) return;
       res
         .status(201)
         .json("Removed image { " + image.name + " } with id { " + query + " }");
@@ -166,7 +175,7 @@ let remove = async (req, res) => {
       for (let i = 0; i < image.fragmentsIDs.length; i++) {
         await db
           .collection("imageFragments")
-          .deleteOne({ _id: new ObjectID(image.fragmentsIDs[i]) });
+          .deleteOne({ _id: new ObjectId(image.fragmentsIDs[i]) });
         console.log(
           "Removed image { " +
             image.name +
@@ -179,7 +188,7 @@ let remove = async (req, res) => {
       }
 
       // delete fragmented image
-      await db.collection("images").deleteOne({ _id: new ObjectID(query) });
+      await db.collection("images").deleteOne({ _id: new ObjectId(query) });
       console.log(
         "Removed fragmented image { " +
           image.name +
@@ -187,7 +196,7 @@ let remove = async (req, res) => {
           query +
           " }"
       );
-      if (bodyID != "") return;
+      if (bodyID != null) return;
       res
         .status(201)
         .json(
@@ -201,6 +210,7 @@ let remove = async (req, res) => {
     }
   } catch (e) {
     console.log(e);
+    if (bodyID != null) return;
     res.status(400).json({ error: "Removing error: " + e });
     return;
   }
