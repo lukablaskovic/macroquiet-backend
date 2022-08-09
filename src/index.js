@@ -30,7 +30,7 @@ app.use(express.json()); //automatski dekodiraj JSON poruke
 // Set EJS as templating engine
 app.set("view engine", "ejs");
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 //Token
 app.get("/token", [auth.verify], token.getToken);
@@ -57,9 +57,8 @@ app.get("/download/image", [auth.verify], storage.download);
 app.delete("/remove/image", [auth.verify], storage.remove);
 
 //Authenticate existing user
-app.post("/auth", async (req, res) => {
+app.post("/auth/web", async (req, res) => {
   let userCredentials = req.body;
-
   try {
     let result = await auth.authenticateUser(
       userCredentials.email,
@@ -69,6 +68,22 @@ app.post("/auth", async (req, res) => {
     res.json(result);
   } catch (e) {
     res.status(401).json({ error: e.message });
+  }
+});
+
+app.post("/auth/unity", async (req, res) => {
+  console.log("Request received");
+  let userCredentials = req.body;
+  //console.log(userCredentials);
+  try {
+    let result = await auth.authenticateUserUnity(
+      userCredentials.email,
+      userCredentials.password
+    );
+    console.log(result);
+    res.send(result);
+  } catch (e) {
+    res.status(401).send({ error: e.message });
   }
 });
 

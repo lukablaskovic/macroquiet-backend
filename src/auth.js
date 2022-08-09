@@ -79,6 +79,19 @@ export default {
       throw new Error("Cannot authenticate");
     }
   },
+  async authenticateUserUnity(email, password) {
+    let db = await connect();
+    let user = await db.collection("users").findOne({ email: email });
+    if (await checkUser(password, user.password)) {
+      console.log("Successful login!");
+      return {
+        email: user.email,
+        username: user.username,
+      };
+    } else {
+      throw new Error("Cannot authenticate");
+    }
+  },
   async changeUserPassword(username, old_password, new_password) {
     let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
