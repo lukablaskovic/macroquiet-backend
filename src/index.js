@@ -30,7 +30,7 @@ app.use(express.json()); //automatski dekodiraj JSON poruke
 // Set EJS as templating engine
 app.set("view engine", "ejs");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 //Token
 app.get("/token", [auth.verify], token.getToken);
