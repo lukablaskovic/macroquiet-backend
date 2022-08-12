@@ -1,9 +1,10 @@
 import connect from "./db.js";
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
-//Kreiranje indexa prilikom boot-a aplikacije
+//Create indexes on boot
 createIndexOnLoad();
 
 async function createIndexOnLoad() {

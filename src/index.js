@@ -1,17 +1,20 @@
 import "dotenv/config";
 import express from "express";
-import connect from "./db.js";
+import bodyParser from "body-parser";
 import cors from "cors";
+
+//Authentification functions
 import auth from "./auth.js";
 
+//Routes
 import user from "./routes/user";
 import token from "./routes/token";
 import storage from "./routes/storage";
 import profile from "./routes/profile";
-
-import bodyParser from "body-parser";
+import auth_user from "./routes/auth_user.js";
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 // Set up EJS
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -24,15 +27,17 @@ app.use(
 );
 
 // Set up CORS
-app.use(cors()); //Omoguci CORS na svim rutama
-app.use(express.json()); //automatski dekodiraj JSON poruke
+app.use(cors()); //Enable CORS on all routes
+app.use(express.json()); //Automatically decode JSON data
 
 // Set EJS as templating engine
 app.set("view engine", "ejs");
 
-const port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`Listening on ${port}`);
+});
 
-//Token
+//JWT Token
 app.get("/token", [auth.verify], token.getToken);
 app.post("/user/token", [auth.verify], token.updateToken);
 
@@ -43,7 +48,7 @@ app.patch("/user/username", [auth.verify], user.changeUsername);
 app.patch("/user/email", [auth.verify], user.changeEmail);
 app.patch("/user/password", [auth.verify], user.changePassword);
 
-//Profile
+//User profile
 app.patch("/user/profile/coverImage", [auth.verify], profile.updateCoverImage);
 app.patch(
   "/user/profile/avatarImage",
@@ -56,58 +61,16 @@ app.post("/upload/image", [auth.verify], storage.upload);
 app.get("/download/image", [auth.verify], storage.download);
 app.delete("/remove/image", [auth.verify], storage.remove);
 
-//Authenticate existing user
-app.post("/auth/web", async (req, res) => {
-  let userCredentials = req.body;
-  try {
-    let result = await auth.authenticateUser(
-      userCredentials.email,
-      userCredentials.password,
-      userCredentials.rememberMe
-    );
-    res.json(result);
-  } catch (e) {
-    res.status(401).json({ error: e.message });
-  }
-});
-
-app.post("/auth/unity", async (req, res) => {
-  console.log("Request received");
-  let userCredentials = req.body;
-  //console.log(userCredentials);
-  try {
-    let result = await auth.authenticateUserUnity(
-      userCredentials.email,
-      userCredentials.password
-    );
-    console.log(result);
-    res.send(result);
-  } catch (e) {
-    res.status(401).send({ error: e.message });
-  }
-});
+app.post("/auth/web", [auth.verify], auth_user.authWeb);
+app.post("auth/unity", [auth.verify], auth_user.authUnity);
 
 //Fetch from database storage
-app.get("/storage", async (req, res) => {
-  let query = String(req.query.data);
-
-  let db = await connect();
-  let cursor = await db.collection(query).find();
-  let results = await cursor.toArray();
-
-  res.json(results);
-});
-app.listen(port, () => {
-  console.log(`Listening on ${port}`);
-});
+app.get("/storage", storage.fetch);
 
 /*
 //REST MOCK
 //TO BE IMPLEMENTED
-//User interface
-//user profile
-app.get("/user", (req, res) => res.json(data.currentUser));
-app.get("/user/:username", (req, res) => res.json(data.oneUser));
+
 //available games
 app.get("/games:gameName", (req, res) => res.json(data.gameDetails));
 app.get("/games:gameName/download", (req, res) =>

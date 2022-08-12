@@ -3,6 +3,16 @@ import connect from "../db.js";
 
 let bodyID = null;
 
+let fetch = async (req, res) => {
+  let query = String(req.query.data);
+
+  let db = await connect();
+  let cursor = await db.collection(query).find();
+  let results = await cursor.toArray();
+
+  res.json(results);
+};
+
 function setBodyID(id) {
   bodyID = id;
 }
@@ -215,4 +225,4 @@ let remove = async (req, res) => {
     return;
   }
 };
-export default { upload, download, remove, setBodyID };
+export default { upload, download, remove, setBodyID, fetch };
