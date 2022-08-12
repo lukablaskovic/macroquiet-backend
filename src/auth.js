@@ -39,6 +39,7 @@ export default {
       username: userData.username,
       email: userData.email,
       password: await encrypt(userData.password),
+      admin: false,
       profile: {
         coverImageID: "",
         avatarImageID: "",
@@ -75,6 +76,7 @@ export default {
         token,
         email: user.email,
         username: user.username,
+        admin: user.admin,
       };
     } else {
       throw new Error("Cannot authenticate");
@@ -146,7 +148,8 @@ export default {
       return result.modifiedCount == 1;
     }
   },
-  verify(req, res, next) {
+  //Middleware for testing token validity
+  verifyToken(req, res, next) {
     try {
       let authorization = req.headers.authorization.split(" ");
       let type = authorization[0];

@@ -38,31 +38,35 @@ app.listen(port, () => {
 });
 
 //JWT Token
-app.get("/token", [auth.verify], token.getToken);
-app.post("/user/token", [auth.verify], token.updateToken);
+app.get("/token", [auth.verifyToken], token.getToken);
+app.post("/user/token", [auth.verifyToken], token.updateToken);
 
 //User
 app.post("/user", user.register);
-app.get("/user", [auth.verify], user.getData);
-app.patch("/user/username", [auth.verify], user.changeUsername);
-app.patch("/user/email", [auth.verify], user.changeEmail);
-app.patch("/user/password", [auth.verify], user.changePassword);
+app.get("/user", [auth.verifyToken], user.getData);
+app.patch("/user/username", [auth.verifyToken], user.changeUsername);
+app.patch("/user/email", [auth.verifyToken], user.changeEmail);
+app.patch("/user/password", [auth.verifyToken], user.changePassword);
 
 //User profile
-app.patch("/user/profile/coverImage", [auth.verify], profile.updateCoverImage);
+app.patch(
+  "/user/profile/coverImage",
+  [auth.verifyToken],
+  profile.updateCoverImage
+);
 app.patch(
   "/user/profile/avatarImage",
-  [auth.verify],
+  [auth.verifyToken],
   profile.updateAvatarImage
 );
 
 //Storage
-app.post("/upload/image", [auth.verify], storage.upload);
-app.get("/download/image", [auth.verify], storage.download);
-app.delete("/remove/image", [auth.verify], storage.remove);
+app.post("/upload/image", [auth.verifyToken], storage.upload);
+app.get("/download/image", [auth.verifyToken], storage.download);
+app.delete("/remove/image", [auth.verifyToken], storage.remove);
 
-app.post("/auth/web", [auth.verify], auth_user.authWeb);
-app.post("auth/unity", [auth.verify], auth_user.authUnity);
+app.post("/auth/web", auth_user.authWeb);
+app.post("auth/unity", auth_user.authUnity);
 
 //Fetch from database storage
 app.get("/storage", storage.fetch);

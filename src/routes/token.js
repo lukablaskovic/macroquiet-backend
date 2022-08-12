@@ -1,9 +1,9 @@
 import auth from "../auth";
+
 let getToken = (req, res) => {
   res.json(req.jwt.email);
 };
 
-//UPDATE JWT token
 let updateToken = (req, res) => {
   let userdata = req.body;
   try {

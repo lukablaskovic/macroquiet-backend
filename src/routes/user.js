@@ -24,6 +24,7 @@ let getData = async (req, res) => {
     let userData = {
       username: user.username,
       email: user.email,
+      admin: user.admin,
       profile: user.profile,
     };
     res.json({ userData });
