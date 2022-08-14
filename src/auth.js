@@ -1,7 +1,7 @@
 import connect from "./db.js";
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 import "dotenv/config";
 
 //Create indexes on boot
@@ -14,24 +14,48 @@ async function createIndexOnLoad() {
 }
 
 export default {
-  setToken(username, email) {
-    let user = {
-      username: username,
-      email: email,
-    };
-
-    let tokenDuration = "7d";
-    let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
-      algorithm: "HS512",
-      expiresIn: tokenDuration,
-    });
-    let tokenData = {
-      token,
-      username: username,
-      email: email,
-    };
-    return tokenData;
+  //Middleware for testing token validity
+  verifyToken(req, res, next) {
+    try {
+      let authorization = req.headers.authorization.split(" ");
+      let type = authorization[0];
+      let token = authorization[1];
+      if (type !== "Bearer") {
+        res.status(401).send(); //Ako nije  bearer, vrati 401
+        return false;
+      } else {
+        req.jwt = jwt.verify(
+          token,
+          process.env.JWT_SECRET || process.env.DEV_SECRET
+        ); //If token is valid, extract data to req.jwt and go next()
+        console.log("Token validated successfully!");
+        return next();
+      }
+    } catch (e) {
+      return res.status(401).send("cannot verify token");
+    }
   },
+  //Middleware for updating token
+  updateToken(req, res, next) {
+    try {
+      let data = req.body;
+      let tokenDuration = "7d";
+      //New token sent in response
+      req.jwt = jwt.sign(
+        data,
+        process.env.JWT_SECRET || process.env.DEV_SECRET,
+        {
+          algorithm: "HS512",
+          expiresIn: tokenDuration,
+        }
+      );
+      console.log("Token updated successfully!");
+      return next();
+    } catch (e) {
+      return res.status(401).send("cannot update token");
+    }
+  },
+  //REGISTER NEW USER
   async registerUser(userData) {
     let db = await connect();
 
@@ -59,19 +83,28 @@ export default {
       }
     }
   },
+  //AUTHENTICATE USER AND SEND JWT TOKEN
   async authenticateUser(email, password, rememberMe) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
-    if (user && user.password && (await checkUser(password, user.password))) {
-      delete user.password;
 
-      let tokenDuration = "1h";
-      if (rememberMe) tokenDuration = "7d";
-      let token = jwt.sign(user, process.env.JWT_SECRET || "much_secret", {
-        algorithm: "HS512",
-        expiresIn: tokenDuration,
-      });
+    if (user && user.password && (await checkUser(password, user.password))) {
+      //Delete fields which won't be included in the token
+      delete user.password;
+      delete user.profile;
+      let tokenDuration = "1d";
+      if (rememberMe) tokenDuration = "30d";
+
+      let token = jwt.sign(
+        user, //Included in payload
+        process.env.JWT_SECRET || process.env.DEV_SECRET,
+        {
+          algorithm: "HS512",
+          expiresIn: tokenDuration,
+        }
+      );
       console.log("Successful login!");
+
       return {
         token,
         email: user.email,
@@ -82,9 +115,11 @@ export default {
       throw new Error("Cannot authenticate");
     }
   },
+  //AUTHENTICATE USER FOR UNITY INTERFACE
   async authenticateUserUnity(email, password) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
+
     if (await checkUser(password, user.password)) {
       console.log("Successful login!");
       return {
@@ -116,26 +151,10 @@ export default {
       return result.modifiedCount == 1;
     }
   },
-  async changeUserUsername(old_username, new_username) {
-    let db = await connect();
-    let user = await db.collection("users").findOne({ username: old_username });
-
-    if (user) {
-      let result = await db.collection("users").updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            username: new_username,
-          },
-        }
-      );
-      return result.modifiedCount == 1;
-    }
-  },
+  //Modify email in database, returns true/false
   async changeUserEmail(username, new_email) {
     let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
-
     if (user) {
       let result = await db.collection("users").updateOne(
         { _id: user._id },
@@ -146,23 +165,6 @@ export default {
         }
       );
       return result.modifiedCount == 1;
-    }
-  },
-  //Middleware for testing token validity
-  verifyToken(req, res, next) {
-    try {
-      let authorization = req.headers.authorization.split(" ");
-      let type = authorization[0];
-      let token = authorization[1];
-      if (type !== "Bearer") {
-        res.status(401).send(); //Ako nije  bearer, vrati 401
-        return false;
-      } else {
-        req.jwt = jwt.verify(token, process.env.JWT_SECRET || "much_secret"); //Ako je sve OK, ako verify prode, exctractaj podatke u req.jwt i idi next()
-        return next();
-      }
-    } catch (e) {
-      return res.status(401).send(); //Ako dode do bilo kakvog excpetiona, vrati 401
     }
   },
 };
