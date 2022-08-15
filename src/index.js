@@ -3,7 +3,7 @@ import "dotenv/config";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-//Authentification functions
+//Authentication functions
 import auth from "./auth.js";
 
 //Routes
@@ -63,5 +63,6 @@ app.post("/upload/image", [auth.verifyToken], r_storage.upload);
 app.get("/download/image", [auth.verifyToken], r_storage.download);
 app.delete("/remove/image", [auth.verifyToken], r_storage.remove);
 
+//Authentication
 app.post("/auth/web", r_auth.authWeb);
 app.post("auth/unity", r_auth.authUnity);
