@@ -55,7 +55,7 @@ export default {
       return res.status(401).send("cannot update token");
     }
   },
-  //REGISTER NEW USER
+  //Register new user
   async registerUser(userData) {
     let db = await connect();
 
@@ -83,7 +83,7 @@ export default {
       }
     }
   },
-  //AUTHENTICATE USER AND SEND JWT TOKEN
+  //Authenticate user and send JWT token
   async authenticateUser(email, password, rememberMe) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
@@ -115,7 +115,7 @@ export default {
       throw new Error("Cannot authenticate");
     }
   },
-  //AUTHENTICATE USER FOR UNITY INTERFACE
+  //Authenticate user for Unity interface
   async authenticateUserUnity(email, password) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
@@ -130,6 +130,7 @@ export default {
       throw new Error("Cannot authenticate");
     }
   },
+  //Modify password in database, returns true/false
   async changeUserPassword(username, old_password, new_password) {
     let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
@@ -175,7 +176,6 @@ async function encrypt(plainTextPassword) {
   const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
   return hashedPassword;
 }
-
 async function checkUser(password, passwordHash) {
   const match = await bcrypt.compare(password, passwordHash);
   return match;
