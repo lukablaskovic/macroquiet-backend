@@ -8,7 +8,7 @@ import auth from "./auth.js";
 
 //Routes
 import r_user from "./routes/r_user";
-import r_storage from "./routes/r_storage";
+import r_storage from "./routes/r_image-store";
 import r_profile from "./routes/r_profile";
 import r_auth from "./routes/r_auth";
 
