@@ -11,6 +11,7 @@ import r_user from "./routes/r_user";
 import r_storage from "./routes/r_image-store";
 import r_profile from "./routes/r_profile";
 import r_auth from "./routes/r_auth";
+import r_admin from "./routes/r_admin";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -59,10 +60,14 @@ app.patch(
 );
 
 //Storage
-app.post("/upload/image", [auth.verifyToken], r_storage.upload);
-app.get("/download/image", [auth.verifyToken], r_storage.download);
-app.delete("/remove/image", [auth.verifyToken], r_storage.remove);
+app.post("/image/upload", [auth.verifyToken], r_storage.upload);
+app.get("/image/download", [auth.verifyToken], r_storage.download);
+app.delete("/image/remove", [auth.verifyToken], r_storage.remove);
 
 //Authentication
 app.post("/auth/web", r_auth.authWeb);
-app.post("auth/unity", r_auth.authUnity);
+app.post("/auth/unity", r_auth.authUnity);
+
+//Admin
+app.post("/admin/timeline", [auth.verifyToken], r_admin.addNewTimelinePost);
+app.get("/admin/data", r_admin.fetchData);
