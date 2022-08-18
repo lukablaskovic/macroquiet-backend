@@ -1,4 +1,3 @@
-import { CURSOR_FLAGS } from "mongodb";
 import connect from "../db.js";
 
 let addNewTimelinePost = async (req, res) => {
