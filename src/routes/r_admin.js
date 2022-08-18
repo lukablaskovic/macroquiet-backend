@@ -1,4 +1,5 @@
 import connect from "../db.js";
+import { ObjectId } from "mongodb";
 
 let addNewTimelinePost = async (req, res) => {
   let db = await connect();
@@ -23,6 +24,20 @@ let addNewTimelinePost = async (req, res) => {
     console.log(e);
   }
 };
+let deleteTimelinePost = async (req, res) => {
+  let db = await connect();
+  let query = String(req.query.id);
+  try {
+    let result = await db
+      .collection("timeline")
+      .deleteOne({ _id: new ObjectId(query) });
+    if (result) {
+      res.status(200).send("Post deleted successfuly!");
+    }
+  } catch (e) {
+    throw new Error("Could not delete post!");
+  }
+};
 let fetchData = async (req, res) => {
   let db = await connect();
   let dataName = String(req.query.d);
@@ -31,4 +46,4 @@ let fetchData = async (req, res) => {
 
   res.json(results);
 };
-export default { addNewTimelinePost, fetchData };
+export default { addNewTimelinePost, deleteTimelinePost, fetchData };

@@ -158,7 +158,6 @@ let download = async (req, res) => {
 
 let remove = async (req, res) => {
   let query;
-  console.log(bodyID);
   if (bodyID == null) query = String(req.query.id);
   else query = bodyID;
 

@@ -39,6 +39,7 @@ export default {
   updateToken(req, res, next) {
     try {
       let data = req.body;
+      console.log(data);
       let tokenDuration = "7d";
       //New token sent in response
       req.jwt = jwt.sign(
@@ -92,6 +93,7 @@ export default {
       //Delete fields which won't be included in the token
       delete user.password;
       delete user.profile;
+      delete user.admin;
       let tokenDuration = "1d";
       if (rememberMe) tokenDuration = "30d";
 
