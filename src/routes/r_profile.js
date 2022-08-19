@@ -1,5 +1,5 @@
 import connect from "../db.js";
-import storage from "./r_storage";
+import storage from "./r_image-store";
 //Change user profile cover image
 
 let updateCoverImage = async (req, res) => {
