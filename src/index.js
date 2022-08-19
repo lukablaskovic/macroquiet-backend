@@ -71,4 +71,5 @@ app.post("/auth/unity", r_auth.authUnity);
 //Admin
 app.post("/admin/timeline", [auth.verifyToken], r_admin.addNewTimelinePost);
 app.delete("/admin/timeline", [auth.verifyToken], r_admin.deleteTimelinePost);
+app.post("/admin/game", [auth.verifyToken], r_admin.addNewGamePost);
 app.get("/admin/data", r_admin.fetchData);
