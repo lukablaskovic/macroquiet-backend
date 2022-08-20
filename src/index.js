@@ -12,6 +12,7 @@ import r_storage from "./routes/r_image-store";
 import r_profile from "./routes/r_profile";
 import r_auth from "./routes/r_auth";
 import r_admin from "./routes/r_admin";
+import r_unity from "./routes/r_unity";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -73,3 +74,8 @@ app.post("/admin/timeline", [auth.verifyToken], r_admin.addNewTimelinePost);
 app.delete("/admin/timeline", [auth.verifyToken], r_admin.deleteTimelinePost);
 app.post("/admin/game", [auth.verifyToken], r_admin.addNewGamePost);
 app.get("/admin/data", r_admin.fetchData);
+
+//Unity
+app.get("/unity/user/profile", r_unity.getUserProfile);
+app.post("/unity/user/profile/game/add", r_unity.addUserProfileGame);
+app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
