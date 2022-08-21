@@ -19,7 +19,6 @@ let authWeb = async (req, res) => {
 let authUnity = async (req, res) => {
   console.log("Request received");
   let userCredentials = req.body;
-  //console.log(userCredentials);
   try {
     let result = await auth.authenticateUserUnity(
       userCredentials.email,
@@ -32,13 +31,11 @@ let authUnity = async (req, res) => {
   }
 };
 let confirmUserEmail = async (req, res) => {
-  console.log("confirming user email...");
-  console.log(req.query.confirmationCode);
   try {
     let db = await connect();
     let user = await db
       .collection("users")
-      .findOne({ confirmationCode: req.query.confirmationCode });
+      .findOne({ confirmationCode: req.params.confirmationCode });
 
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
@@ -46,7 +43,7 @@ let confirmUserEmail = async (req, res) => {
       if (user.confirmed)
         res.status(400).send({ message: "Email already confrimed!" });
       let result = await db.collection("users").updateOne(
-        { confirmationCode: req.query.confirmationCode },
+        { confirmationCode: req.params.confirmationCode },
         {
           $set: {
             confirmed: true,

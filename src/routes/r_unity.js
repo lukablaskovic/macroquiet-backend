@@ -17,7 +17,6 @@ let getUserProfile = async (req, res) => {
   }
 };
 
-//add user profile game
 let addUserProfileGame = async (req, res) => {
   let changes = req.body;
   let game = JSON.parse(changes.game);
@@ -44,9 +43,7 @@ let addUserProfileGame = async (req, res) => {
   }
 };
 
-//add user profile game
 let updateUserProfileGame = async (req, res) => {
-  console.log("Ysadasdasdasdasdas");
   let changes = req.body;
   let game = JSON.parse(changes.game);
 

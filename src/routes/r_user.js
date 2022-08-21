@@ -54,7 +54,7 @@ let changeEmail = async (req, res) => {
       return;
     }
   } else {
-    res.status(400).json({ error: "Wrong query!" });
+    res.status(400).json({ error: "Wrong input!" });
     return;
   }
 };

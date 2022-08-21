@@ -13,7 +13,6 @@ let addNewTimelinePost = async (req, res) => {
     image: postData.image,
     date: postData.date,
   };
-  console.log(doc);
   try {
     let result = await db.collection("timeline").insertOne(doc);
     if (result && result.insertedId) {
@@ -52,6 +51,8 @@ let addNewGamePost = async (req, res) => {
 };
 let deleteTimelinePost = async (req, res) => {
   let db = await connect();
+  console.log(query);
+
   let query = String(req.query.id);
   try {
     let result = await db

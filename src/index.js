@@ -46,6 +46,7 @@ app.patch(
   [auth.verifyToken, auth.updateToken],
   r_user.changeEmail
 );
+
 app.patch("/user/password", [auth.verifyToken], r_user.changePassword);
 
 //User profile
@@ -54,6 +55,7 @@ app.patch(
   [auth.verifyToken],
   r_profile.updateCoverImage
 );
+
 app.patch(
   "/user/profile/avatarImage",
   [auth.verifyToken],
@@ -68,12 +70,24 @@ app.delete("/image/remove", [auth.verifyToken], r_storage.remove);
 //Authentication
 app.post("/auth/web", r_auth.authWeb);
 app.post("/auth/unity", r_auth.authUnity);
-app.get("/auth/confirm", r_auth.confirmUserEmail);
+app.get("/auth/confirm/:confirmationCode", r_auth.confirmUserEmail);
 
 //Admin
-app.post("/admin/timeline", [auth.verifyToken], r_admin.addNewTimelinePost);
-app.delete("/admin/timeline", [auth.verifyToken], r_admin.deleteTimelinePost);
-app.post("/admin/game", [auth.verifyToken], r_admin.addNewGamePost);
+app.post(
+  "/admin/timeline",
+  [auth.verifyToken, auth.adminCheck],
+  r_admin.addNewTimelinePost
+);
+app.delete(
+  "/admin/timeline",
+  [auth.verifyToken, auth.adminCheck],
+  r_admin.deleteTimelinePost
+);
+app.post(
+  "/admin/game",
+  [auth.verifyToken, auth.adminCheck],
+  r_admin.addNewGamePost
+);
 app.get("/admin/data", r_admin.fetchData);
 
 //Unity

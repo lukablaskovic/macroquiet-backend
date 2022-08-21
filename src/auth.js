@@ -22,14 +22,13 @@ export default {
       let type = authorization[0];
       let token = authorization[1];
       if (type !== "Bearer") {
-        res.status(401).send(); //Ako nije  bearer, vrati 401
+        res.status(401).send(); //If token is not Bearer type, return 401
         return false;
       } else {
         req.jwt = jwt.verify(
           token,
           process.env.JWT_SECRET || process.env.DEV_SECRET
         ); //If token is valid, extract data to req.jwt and go next()
-        console.log("Token validated successfully!");
         return next();
       }
     } catch (e) {
@@ -39,12 +38,11 @@ export default {
   //Middleware for updating token
   updateToken(req, res, next) {
     try {
-      let data = req.body;
-      console.log(data);
+      let userData = req.body;
       let tokenDuration = "7d";
       //New token sent in response
       req.jwt = jwt.sign(
-        data,
+        userData,
         process.env.JWT_SECRET || process.env.DEV_SECRET,
         {
           algorithm: "HS512",
@@ -55,6 +53,21 @@ export default {
       return next();
     } catch (e) {
       return res.status(401).send("cannot update token");
+    }
+  },
+  //Middleware for checking for admin rights
+  async adminCheck(req, res, next) {
+    try {
+      let userData = req.jwt;
+      let db = await connect();
+      let user = await db
+        .collection("users")
+        .findOne({ username: userData.username });
+      if (!user.admin) {
+        res.status(401).send("Unauthorized");
+      } else return next();
+    } catch (e) {
+      res.send(e);
     }
   },
   //Register new user
@@ -104,6 +117,7 @@ export default {
       delete user.profile;
       delete user.admin;
       delete user.confirmed;
+      delete user.confirmationCode;
       let tokenDuration = "1d";
       if (rememberMe) tokenDuration = "30d";
 
@@ -124,7 +138,7 @@ export default {
         admin: user.admin,
       };
     } else {
-      throw new Error("Cannot authenticate");
+      throw new Error("Wrong username or password!");
     }
   },
   //Authenticate user for Unity interface

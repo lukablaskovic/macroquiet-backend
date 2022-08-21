@@ -26,14 +26,14 @@ function generateToken(userEmail) {
   }
 }
 async function sendConfirmationEmail(username, email, confirmationCode) {
-  const url = `http://192.168.5.24:3000/auth/confirm?confirmationCode=${confirmationCode}`;
+  const url = `https://macroquiet.herokuapp.com/auth/confirm/${confirmationCode}`;
   let sendResult = await transporter.sendMail({
     from: "MacroQuiet <noreply@macroquiet.com>",
     to: email,
     subject: "Please confirm your MacroQuiet account.",
     html: `<h2>Hello there ${username}</h2>
             <p>We are so excited you've decided to join our community!</p>
-            <p>Please confirm your email by clicking <a href=${url}>here</a></p> 
+            <p>Please confirm your email by clicking <a href=${url}>here</a>.</p> 
             
             </div>`,
   });
