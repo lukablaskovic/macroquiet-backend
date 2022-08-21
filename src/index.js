@@ -68,6 +68,7 @@ app.delete("/image/remove", [auth.verifyToken], r_storage.remove);
 //Authentication
 app.post("/auth/web", r_auth.authWeb);
 app.post("/auth/unity", r_auth.authUnity);
+app.get("/auth/confirm", r_auth.confirmUserEmail);
 
 //Admin
 app.post("/admin/timeline", [auth.verifyToken], r_admin.addNewTimelinePost);

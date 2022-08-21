@@ -1,10 +1,11 @@
 import auth from "../auth";
+import connect from "../db.js";
 
 //Authenticate existing user on Vue.js frontend
 let authWeb = async (req, res) => {
   let userCredentials = req.body;
   try {
-    let userData = await auth.authenticateUser(
+    let userData = await auth.authenticateUserWeb(
       userCredentials.email,
       userCredentials.password,
       userCredentials.rememberMe
@@ -30,4 +31,34 @@ let authUnity = async (req, res) => {
     res.status(401).send({ error: e.message });
   }
 };
-export default { authWeb, authUnity };
+let confirmUserEmail = async (req, res) => {
+  console.log("confirming user email...");
+  console.log(req.query.confirmationCode);
+  try {
+    let db = await connect();
+    let user = await db
+      .collection("users")
+      .findOne({ confirmationCode: req.query.confirmationCode });
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    } else {
+      if (user.confirmed)
+        res.status(400).send({ message: "Email already confrimed!" });
+      let result = await db.collection("users").updateOne(
+        { confirmationCode: req.query.confirmationCode },
+        {
+          $set: {
+            confirmed: true,
+          },
+        }
+      );
+      if (result) res.redirect("https://macroquiet.com/login");
+    }
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+};
+
+export default { authWeb, authUnity, confirmUserEmail };

@@ -1,8 +1,9 @@
-import connect from "./db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import "dotenv/config";
+
+import connect from "./db.js";
+import eMailer from "./eMailer.js";
 
 //Create indexes on boot
 createIndexOnLoad();
@@ -65,15 +66,21 @@ export default {
       email: userData.email,
       password: await encrypt(userData.password),
       admin: false,
+      confirmed: false,
+      confirmationCode: eMailer.generateToken(userData.email),
       profile: {
         coverImageID: "",
         avatarImageID: "",
       },
     };
-
     try {
       let result = await db.collection("users").insertOne(doc);
       if (result && result.insertedId) {
+        eMailer.sendConfirmationEmail(
+          doc.username,
+          doc.email,
+          doc.confirmationCode
+        );
         return result.insertedId;
       }
     } catch (e) {
@@ -85,15 +92,18 @@ export default {
     }
   },
   //Authenticate user and send JWT token
-  async authenticateUser(email, password, rememberMe) {
+  async authenticateUserWeb(email, password, rememberMe) {
     let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
-
     if (user && user.password && (await checkUser(password, user.password))) {
+      if (!user.confirmed) {
+        throw new Error("Please confirm your email to login!");
+      }
       //Delete fields which won't be included in the token
       delete user.password;
       delete user.profile;
       delete user.admin;
+      delete user.confirmed;
       let tokenDuration = "1d";
       if (rememberMe) tokenDuration = "30d";
 
