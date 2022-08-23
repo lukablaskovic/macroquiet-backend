@@ -35,29 +35,38 @@ let authUnity = async (req, res) => {
 };
 let confirmUserEmail = async (req, res) => {
   try {
+    console.log(1);
     let db = await connect();
     let user = await db
       .collection("users")
       .findOne({ confirmationCode: req.params.confirmationCode });
-
+    console.log(2);
     if (!user) {
+      console.log(3);
       return res.status(404).send({ message: "User Not found." });
     } else {
-      if (user.confirmed)
-        res.status(400).send({ message: "Email already confrimed!" });
-      let result = await db.collection("users").updateOne(
-        { confirmationCode: req.params.confirmationCode },
-        {
-          $set: {
-            confirmed: true,
-          },
+      if (user.confirmed) {
+        console.log(4);
+        return res.status(400).send({ message: "Email already confrimed!" });
+      } else {
+        console.log(5);
+        let result = await db.collection("users").updateOne(
+          { confirmationCode: req.params.confirmationCode },
+          {
+            $set: {
+              confirmed: true,
+            },
+          }
+        );
+        if (result) {
+          console.log(6);
+          return res.redirect("https://macroquiet.com/login");
         }
-      );
-      if (result) res.redirect("https://macroquiet.com/login");
+      }
     }
   } catch (e) {
-    res.status(503).json({ error: e.message });
-    return;
+    console.log(7);
+    return res.status(503).json({ error: e.message });
   }
 };
 
