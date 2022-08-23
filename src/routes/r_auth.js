@@ -53,7 +53,7 @@ let confirmUserEmail = async (req, res) => {
           },
         }
       );
-      if (result) res.redirect(200, "https://macroquiet.com/login");
+      if (result) res.redirect("https://macroquiet.com/login");
     }
   } catch (e) {
     res.status(503).json({ error: e.message });
