@@ -38,7 +38,7 @@ app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
 
-//User
+//User endpoints
 app.post("/user", r_user.register);
 app.get("/user", [auth.verifyToken], r_user.getData);
 app.patch(
@@ -49,7 +49,7 @@ app.patch(
 
 app.patch("/user/password", [auth.verifyToken], r_user.changePassword);
 
-//User profile
+//User profile endpoints
 app.patch(
   "/user/profile/coverImage",
   [auth.verifyToken],
@@ -62,33 +62,30 @@ app.patch(
   r_profile.updateAvatarImage
 );
 
-//Storage
+//Storage endpoints
 app.post("/image/upload", [auth.verifyToken], r_storage.upload);
 app.get("/image/download", [auth.verifyToken], r_storage.download);
 app.delete("/image/remove", [auth.verifyToken], r_storage.remove);
 
-//Authentication
+//Authentication endpoints
 app.post("/auth/web", r_auth.authWeb);
 app.post("/auth/unity", r_auth.authUnity);
 app.get("/auth/confirm/:confirmationCode", r_auth.confirmUserEmail);
 
-//Admin
+//Admin endpoints
+app.get("/admin/data/:name", r_admin.fetchData);
+
 app.post(
-  "/admin/timeline",
+  "/admin/data/:name",
   [auth.verifyToken, auth.adminCheck],
-  r_admin.addNewTimelinePost
+  r_admin.insertDocument
 );
+
 app.delete(
-  "/admin/timeline",
+  "/admin/data/:name",
   [auth.verifyToken, auth.adminCheck],
-  r_admin.deleteTimelinePost
+  r_admin.deleteDocument
 );
-app.post(
-  "/admin/game",
-  [auth.verifyToken, auth.adminCheck],
-  r_admin.addNewGamePost
-);
-app.get("/admin/data", r_admin.fetchData);
 
 //Unity
 app.get("/unity/user/profile", r_unity.getUserProfile);

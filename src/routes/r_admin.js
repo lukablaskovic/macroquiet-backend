@@ -1,82 +1,57 @@
 import connect from "../db.js";
 import { ObjectId } from "mongodb";
 
-let addNewTimelinePost = async (req, res) => {
-  let db = await connect();
-
-  let postData = req.body;
-  let doc = {
-    title: postData.title,
-    text: postData.text,
-    author: postData.author,
-    icon: postData.icon,
-    image: postData.image,
-    date: postData.date,
-  };
-  try {
-    let result = await db.collection("timeline").insertOne(doc);
-    if (result && result.insertedId) {
-      console.log("Post with ID" + result.insertedId + "sucessfuly inserted");
-      res.json("Post with ID" + result.insertedId + "sucessfuly inserted");
-      return result.insertedId;
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-let addNewGamePost = async (req, res) => {
-  let db = await connect();
-
-  let postData = req.body;
-  let doc = {
-    title: postData.title,
-    text: postData.text,
-    availability: postData.availability,
-    imageSrc: postData.imageSrc,
-    gName: postData.gName,
-  };
-  console.log(doc);
-  try {
-    let result = await db.collection("gameCards").insertOne(doc);
-    if (result && result.insertedId) {
-      console.log(
-        "Game Post with ID" + result.insertedId + "sucessfuly inserted"
-      );
-      res.json("Game Post with ID" + result.insertedId + "sucessfuly inserted");
-      return result.insertedId;
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-let deleteTimelinePost = async (req, res) => {
-  let db = await connect();
-  console.log(query);
-
-  let query = String(req.query.id);
-  try {
-    let result = await db
-      .collection("timeline")
-      .deleteOne({ _id: new ObjectId(query) });
-    if (result) {
-      console.log("Post with ID" + req.query.id + "successfully deleted");
-      res.status(200).send("Post deleted successfuly!");
-    }
-  } catch (e) {
-    console.log(e);
-    throw new Error("Could not delete post!");
-  }
-};
 let fetchData = async (req, res) => {
   let db = await connect();
-  let dataName = String(req.query.d);
-  let cursor = await db.collection(dataName).find();
-  let results = await cursor.toArray();
-  res.json(results);
+  let dataName = String(req.params.name);
+  try {
+    let cursor = await db.collection(dataName).find();
+    let result = await cursor.toArray();
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(400).json(e);
+  }
 };
+
+let insertDocument = async (req, res) => {
+  let collectionName = String(req.params.name);
+  let doc = req.body;
+  let db = await connect();
+  try {
+    let result = await db.collection(collectionName).insertOne(doc);
+    if (result && result.insertedId) {
+      console.log(
+        `Document with an ID: ${result.insertedId} has been sucessfuly inserted!`
+      );
+      res.status(201).send(result.insertedId);
+    }
+  } catch (e) {
+    throw new Error("Could not insert document!");
+  }
+};
+
+let deleteDocument = async (req, res) => {
+  let collectionName = String(req.params.name);
+  let docID = req.query.id;
+
+  let db = await connect();
+  try {
+    let result = await db
+      .collection(collectionName)
+      .deleteOne({ _id: new ObjectId(docID) });
+    if (result) {
+      console.log(
+        `Document with an ID ${docID} has been successfully deleted!`
+      );
+      res.status(202).send(docID);
+    } else res.status(204).send("Document not found!");
+  } catch (e) {
+    throw new Error("Could not delete document!" + e);
+  }
+};
+
 export default {
-  addNewTimelinePost,
-  addNewGamePost,
-  deleteTimelinePost,
   fetchData,
+  insertDocument,
+  deleteDocument,
 };
