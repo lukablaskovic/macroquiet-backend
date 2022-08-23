@@ -4,13 +4,14 @@ import connect from "../db.js";
 //Authenticate existing user on Vue.js frontend
 let authWeb = async (req, res) => {
   let userCredentials = req.body;
+  if (!userCredentials) res.status(400);
   try {
     let userData = await auth.authenticateUserWeb(
       userCredentials.email,
       userCredentials.password,
       userCredentials.rememberMe
     );
-    res.json(userData);
+    res.status(200).json(userData);
   } catch (e) {
     res.status(401).json({ error: e.message });
   }
@@ -19,14 +20,16 @@ let authWeb = async (req, res) => {
 let authUnity = async (req, res) => {
   console.log("Request received");
   let userCredentials = req.body;
+  if (!userCredentials) res.status(400);
   try {
-    let result = await auth.authenticateUserUnity(
+    let userData = await auth.authenticateUserUnity(
       userCredentials.email,
       userCredentials.password
     );
-    console.log(result);
-    res.send(result);
+    res.status(200).json(userData);
   } catch (e) {
+    if (e.message == "User doesn't exist!")
+      res.status(404).send({ error: e.message });
     res.status(401).send({ error: e.message });
   }
 };
@@ -50,10 +53,10 @@ let confirmUserEmail = async (req, res) => {
           },
         }
       );
-      if (result) res.redirect("https://macroquiet.com/login");
+      if (result) res.redirect(200, "https://macroquiet.com/login");
     }
   } catch (e) {
-    console.log(e);
+    res.status(503).json({ error: e.message });
     return;
   }
 };

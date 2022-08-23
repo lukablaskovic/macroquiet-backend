@@ -1,11 +1,11 @@
 import connect from "../db.js";
-import storage from "./r_image-store";
-//Change user profile cover image
+import storage from "./r_image-storage";
 
+//Change user profile cover image
 let updateCoverImage = async (req, res) => {
-  let changes = req.body.id;
+  let imageID = req.body.id;
   let username = req.jwt.username;
-  if (changes) {
+  if (imageID) {
     try {
       let db = await connect();
       //find user
@@ -19,29 +19,28 @@ let updateCoverImage = async (req, res) => {
           .collection("users")
           .updateOne(
             { _id: user._id },
-            { $set: { "profile.coverImageID": changes } }
+            { $set: { "profile.coverImageID": imageID } }
           );
-        console.log("Profile cover updated with id { " + changes + " }");
+        console.log("Profile cover updated with id { " + imageID + " }");
         res
-          .status(201)
-          .send("Profile cover updated with id { " + changes + " }");
-        return;
+          .status(200)
+          .send("Profile cover updated with id { " + imageID + " }");
+      } else {
+        res.status(404);
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).json(e);
+      res.status(500).json(e);
     }
   } else {
-    res.status(400).json("Wrong query!");
-    return;
+    res.status(400);
   }
 };
 
 //Change user profile avatar image
 let updateAvatarImage = async (req, res) => {
-  let changes = req.body.id;
+  let imageID = req.body.id;
   let username = req.jwt.username;
-  if (changes) {
+  if (imageID) {
     try {
       let db = await connect();
       //find user
@@ -56,21 +55,20 @@ let updateAvatarImage = async (req, res) => {
           .collection("users")
           .updateOne(
             { _id: user._id },
-            { $set: { "profile.avatarImageID": changes } }
+            { $set: { "profile.avatarImageID": imageID } }
           );
-        console.log("Profile avatar updated with id { " + changes + " }");
+        console.log("Profile avatar updated with id { " + imageID + " }");
         res
-          .status(201)
-          .send("Profile avatar updated with id { " + changes + " }");
-        return;
+          .status(200)
+          .send("Profile avatar updated with id { " + imageID + " }");
+      } else {
+        res.status(404);
       }
     } catch (e) {
-      console.log(e);
-      res.status(400).json(e);
+      res.status(500).json(e);
     }
   } else {
-    res.status(400).json("Wrong query!");
-    return;
+    res.status(400);
   }
 };
 

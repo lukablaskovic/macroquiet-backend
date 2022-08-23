@@ -3,36 +3,36 @@ import connect from "../db.js";
 
 //Register new user
 let register = async (req, res) => {
-  let user = req.body;
-  let id;
-
+  let userData = req.body;
+  let id = "";
   try {
-    id = await auth.registerUser(user);
+    id = await auth.registerUser(userData);
+    res.status(201).json({ id: id });
   } catch (e) {
     res.status(500).json({ error: e.message });
-    return;
   }
-  res.json({ id: id });
 };
 
 //Get user data from db
 let getData = async (req, res) => {
-  let query = String(req.query.username);
+  let username = String(req.params.username);
   try {
     let db = await connect();
-    let user = await db.collection("users").findOne({ username: query });
-    let userData = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      admin: user.admin,
-      profile: user.profile,
-    };
-    res.json({ userData });
-    return;
+    let user = await db.collection("users").findOne({ username: username });
+    if (user) {
+      let userData = {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        admin: user.admin,
+        profile: user.profile,
+      };
+      res.status(200).json({ userData });
+    } else {
+      res.status(404);
+    }
   } catch (e) {
-    res.status(500).json({ error: e.message });
-    return;
+    res.status(503).json({ error: e.message });
   }
 };
 
@@ -40,46 +40,46 @@ let getData = async (req, res) => {
 let changeEmail = async (req, res) => {
   let changes = req.body;
   let newToken = req.jwt;
-  let username = changes.username;
+
+  if (changes.username == req.params.username) {
+    res.status(401);
+    return;
+  }
+
   if (changes) {
-    let result = await auth.changeUserEmail(username, changes.email);
+    let result = await auth.changeUserEmail(changes.username, changes.email);
     if (result) {
-      console.log("Email changed successfully");
       let userData = changes;
+      //Add token to response payload
       userData.token = newToken;
-      res.json(userData);
-      return;
+      res.status(200).json(userData);
     } else {
       res.status(500).json({ error: "Cannot change email!" });
-      return;
     }
   } else {
     res.status(400).json({ error: "Wrong input!" });
-    return;
   }
 };
 
 //Change user password
 let changePassword = async (req, res) => {
   let changes = req.body;
-
-  if (changes.username && changes.new_password && changes.old_password) {
-    let result = await auth.changeUserPassword(
-      changes.username,
-      changes.old_password,
-      changes.new_password
-    );
-
-    if (result) {
-      res.status(201).send();
-      return;
+  let username = req.params.username;
+  try {
+    if (username && changes.new_password && changes.old_password) {
+      let result = await auth.changeUserPassword(
+        username,
+        changes.old_password,
+        changes.new_password
+      );
+      if (result) {
+        res.status(200).send({ message: "Password successfully changed." });
+      }
     } else {
-      res.status(500).json({ error: "Cannot change password!" });
-      return;
+      res.status(400).json({ error: "Wrong query!" });
     }
-  } else {
-    res.status(400).json({ error: "Wrong query!" });
-    return;
+  } catch (e) {
+    res.status(401).send({ error: e.message });
   }
 };
 

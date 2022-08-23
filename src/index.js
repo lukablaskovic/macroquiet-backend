@@ -8,7 +8,7 @@ import auth from "./auth.js";
 
 //Routes
 import r_user from "./routes/r_user";
-import r_storage from "./routes/r_image-store";
+import r_imageStorage from "./routes/r_image-storage";
 import r_profile from "./routes/r_profile";
 import r_auth from "./routes/r_auth";
 import r_admin from "./routes/r_admin";
@@ -39,33 +39,37 @@ app.listen(port, () => {
 });
 
 //User endpoints
-app.post("/user", r_user.register);
-app.get("/user", [auth.verifyToken], r_user.getData);
+app.post("/users", r_user.register);
+app.get("/users/:username", [auth.verifyToken], r_user.getData);
 app.patch(
-  "/user/email",
+  "/users/:username/email",
   [auth.verifyToken, auth.updateToken],
   r_user.changeEmail
 );
 
-app.patch("/user/password", [auth.verifyToken], r_user.changePassword);
+app.patch(
+  "/users/:username/password",
+  [auth.verifyToken],
+  r_user.changePassword
+);
 
 //User profile endpoints
 app.patch(
-  "/user/profile/coverImage",
+  "/users/:username/profile/coverImage",
   [auth.verifyToken],
   r_profile.updateCoverImage
 );
 
 app.patch(
-  "/user/profile/avatarImage",
+  "/users/:username/profile/avatarImage",
   [auth.verifyToken],
   r_profile.updateAvatarImage
 );
 
 //Storage endpoints
-app.post("/image/upload", [auth.verifyToken], r_storage.upload);
-app.get("/image/download", [auth.verifyToken], r_storage.download);
-app.delete("/image/remove", [auth.verifyToken], r_storage.remove);
+app.post("/images", [auth.verifyToken], r_imageStorage.upload);
+app.get("/images/:id", [auth.verifyToken], r_imageStorage.download);
+app.delete("/images/:id", [auth.verifyToken], r_imageStorage.remove);
 
 //Authentication endpoints
 app.post("/auth/web", r_auth.authWeb);

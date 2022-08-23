@@ -7,9 +7,13 @@ import eMailer from "./eMailer.js";
 
 //Create indexes on boot
 createIndexOnLoad();
+let db = null;
 
 async function createIndexOnLoad() {
-  let db = await connect();
+  db = await connect();
+  if (!db) {
+    throw new Error("Could not connect to the database");
+  }
   await db.collection("users").createIndex({ username: 1 }, { unique: true });
   await db.collection("users").createIndex({ email: 1 }, { unique: true });
 }
@@ -32,7 +36,7 @@ export default {
         return next();
       }
     } catch (e) {
-      return res.status(401).send("cannot verify token");
+      return res.status(401).send("Cannot verify token");
     }
   },
   //Middleware for updating token
@@ -59,7 +63,6 @@ export default {
   async adminCheck(req, res, next) {
     try {
       let userData = req.jwt;
-      let db = await connect();
       let user = await db
         .collection("users")
         .findOne({ username: userData.username });
@@ -72,8 +75,6 @@ export default {
   },
   //Register new user
   async registerUser(userData) {
-    let db = await connect();
-
     let doc = {
       username: userData.username,
       email: userData.email,
@@ -82,8 +83,10 @@ export default {
       confirmed: false,
       confirmationCode: eMailer.generateToken(userData.email),
       profile: {
+        description: "",
         coverImageID: "",
         avatarImageID: "",
+        games: [],
       },
     };
     try {
@@ -106,7 +109,6 @@ export default {
   },
   //Authenticate user and send JWT token
   async authenticateUserWeb(email, password, rememberMe) {
-    let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
     if (user && user.password && (await checkUser(password, user.password))) {
       if (!user.confirmed) {
@@ -143,9 +145,10 @@ export default {
   },
   //Authenticate user for Unity interface
   async authenticateUserUnity(email, password) {
-    let db = await connect();
     let user = await db.collection("users").findOne({ email: email });
-
+    if (!user) {
+      throw new Error("User doesn't exist!");
+    }
     if (await checkUser(password, user.password)) {
       console.log("Successful login!");
       return {
@@ -153,12 +156,11 @@ export default {
         username: user.username,
       };
     } else {
-      throw new Error("Cannot authenticate");
+      throw new Error("Wrong username or password!");
     }
   },
   //Modify password in database, returns true/false
   async changeUserPassword(username, old_password, new_password) {
-    let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
 
     if (
@@ -176,11 +178,12 @@ export default {
         }
       );
       return result.modifiedCount == 1;
+    } else {
+      throw new Error("Unauthorised!");
     }
   },
   //Modify email in database, returns true/false
   async changeUserEmail(username, new_email) {
-    let db = await connect();
     let user = await db.collection("users").findOne({ username: username });
     if (user) {
       let result = await db.collection("users").updateOne(
