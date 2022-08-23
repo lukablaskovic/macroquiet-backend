@@ -107,10 +107,6 @@ let upload = async (req, res) => {
 
 let download = async (req, res) => {
   let imageID = String(req.params.id);
-  if (imageID == "") {
-    res.status(400).json({ error: "Download error: " + e });
-    return;
-  }
 
   let db = await connect();
   try {

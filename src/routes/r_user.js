@@ -41,8 +41,8 @@ let changeEmail = async (req, res) => {
   let changes = req.body;
   let newToken = req.jwt;
 
-  if (changes.username == req.params.username) {
-    res.status(401);
+  if (changes.username != req.params.username) {
+    res.status(401).json({ error: "Cannot change email!" });
     return;
   }
 
