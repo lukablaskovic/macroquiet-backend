@@ -29,10 +29,7 @@ export default {
         res.status(401).send(); //If token is not Bearer type, return 401
         return false;
       } else {
-        req.jwt = jwt.verify(
-          token,
-          process.env.JWT_SECRET || process.env.DEV_SECRET
-        ); //If token is valid, extract data to req.jwt and go next()
+        req.jwt = jwt.verify(token, process.env.JWT_SECRET); //If token is valid, extract data to req.jwt and go next()
         return next();
       }
     } catch (e) {
@@ -45,14 +42,10 @@ export default {
       let userData = req.body;
       let tokenDuration = "7d";
       //New token sent in response
-      req.jwt = jwt.sign(
-        userData,
-        process.env.JWT_SECRET || process.env.DEV_SECRET,
-        {
-          algorithm: "HS512",
-          expiresIn: tokenDuration,
-        }
-      );
+      req.jwt = jwt.sign(userData, process.env.JWT_SECRET, {
+        algorithm: "HS512",
+        expiresIn: tokenDuration,
+      });
       console.log("Token updated successfully!");
       return next();
     } catch (e) {
@@ -83,7 +76,7 @@ export default {
       confirmed: false,
       confirmationCode: eMailer.generateToken(userData.email),
       profile: {
-        description: "",
+        description: `Hi, I am ${username}. Nice to meet you!`,
         coverImageID: "",
         avatarImageID: "",
         games: [],
@@ -125,7 +118,7 @@ export default {
 
       let token = jwt.sign(
         user, //Included in payload
-        process.env.JWT_SECRET || process.env.DEV_SECRET,
+        process.env.JWT_SECRET,
         {
           algorithm: "HS512",
           expiresIn: tokenDuration,

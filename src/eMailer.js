@@ -13,13 +13,9 @@ let transporter = nodemailer.createTransport({
 });
 function generateToken(userEmail) {
   try {
-    let emailToken = jwt.sign(
-      userEmail,
-      process.env.JWT_EMAIL_SECRET || process.env.DEV_EMAIL_SECRET,
-      {
-        algorithm: "HS512",
-      }
-    );
+    let emailToken = jwt.sign(userEmail, process.env.JWT_EMAIL_SECRET, {
+      algorithm: "HS512",
+    });
     return emailToken;
   } catch (e) {
     console.log(e);
