@@ -95,3 +95,8 @@ app.delete(
 app.get("/unity/user/profile", r_unity.getUserProfile);
 app.post("/unity/user/profile/game/add", r_unity.addUserProfileGame);
 app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
+
+//Get Keys
+app.get("/var:key", async (req, res) => {
+  res.send(process.env.req.params.key);
+});
