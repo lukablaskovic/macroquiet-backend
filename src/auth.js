@@ -76,7 +76,7 @@ export default {
       confirmed: false,
       confirmationCode: eMailer.generateToken(userData.email),
       profile: {
-        description: `Hi, I am ${doc.username}. Nice to meet you!`,
+        description: `Hi, I am ${userData.username}. Nice to meet you!`,
         coverImageID: "",
         avatarImageID: "",
         games: [],
