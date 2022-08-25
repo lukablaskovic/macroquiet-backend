@@ -98,6 +98,5 @@ app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
 
 //Get Keys
 app.get("/var/:key", async (req, res) => {
-  let key = req.params.key;
-  res.json({ key: key, value: process.env.key });
+  res.json({ key: key, value: process.env.eq.params.key });
 });
