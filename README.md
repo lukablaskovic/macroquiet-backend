@@ -6,8 +6,7 @@
 
 
 ### Poveznica na aplikaciju
-- https://macroquiet.com/ (Front-end)
-- https://macroquiet.herokuapp.com/ (Back-end)
+- https://macroquiet.herokuapp.com/
 
 ### Autori i zaduženja
 
