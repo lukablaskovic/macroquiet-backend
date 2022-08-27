@@ -20,17 +20,17 @@ let authWeb = async (req, res) => {
 let authUnity = async (req, res) => {
   console.log("Request received");
   let userCredentials = req.body;
-  if (!userCredentials) res.status(400);
+  if (!userCredentials) return res.status(400);
   try {
     let userData = await auth.authenticateUserUnity(
       userCredentials.email,
       userCredentials.password
     );
-    res.status(200).json(userData);
+    return res.status(200).json(userData);
   } catch (e) {
     if (e.message == "User doesn't exist!")
-      res.status(404).send({ error: e.message });
-    res.status(401).send({ error: e.message });
+      return res.status(404).send({ error: e.message });
+    return res.status(401).send({ error: e.message });
   }
 };
 let confirmUserEmail = async (req, res) => {

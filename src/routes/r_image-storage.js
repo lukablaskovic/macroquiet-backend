@@ -95,7 +95,6 @@ let upload = async (req, res) => {
 
       let response = await storeImage(db, fragmentsIDs, name, false); //storing fragmented image into mongoDB with fragmentIDs array
 
-      console.log(response.msg);
       res.status(201).send({ id: response.id });
       return;
     }
@@ -116,7 +115,7 @@ let download = async (req, res) => {
       .findOne({ _id: new ObjectId(imageID) });
 
     if (image.img != "fragmented") {
-      res.status(201).json(image); // return image if not fragmented
+      return res.status(201).json(image); // return image if not fragmented
     } else {
       //if fragmented, merge image fragments
       image.img = "";
@@ -126,10 +125,10 @@ let download = async (req, res) => {
           .findOne({ _id: new ObjectId(image.fragmentsIDs[i]) });
         image.img += fragment.frg;
       }
-      res.status(201).json(image); //return merged image
+      return res.status(201).json(image); //return merged image
     }
   } catch (e) {
-    res.status(400).json({ error: "Download error: " + e });
+    return res.status(400).json({ error: "Download error: " + e });
   }
 };
 

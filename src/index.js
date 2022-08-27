@@ -20,11 +20,11 @@ const port = process.env.PORT || 3000;
 // Set up EJS
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
-  bodyParser.urlencoded({
-    limit: "50mb",
-    extended: true,
-    parameterLimit: 500000,
-  })
+    bodyParser.urlencoded({
+        limit: "50mb",
+        extended: true,
+        parameterLimit: 500000,
+    })
 );
 
 // Set up CORS
@@ -35,35 +35,41 @@ app.use(express.json()); //Automatically decode JSON data
 app.set("view engine", "ejs");
 
 app.listen(port, () => {
-  console.log(`Listening on ${port}`);
+    console.log(`Listening on ${port}`);
 });
 
 //User endpoints
 app.post("/users", r_user.register);
 app.get("/users/:username", [auth.verifyToken], r_user.getData);
 app.patch(
-  "/users/:username/email",
-  [auth.verifyToken, auth.updateToken],
-  r_user.changeEmail
+    "/users/:username/email",
+    [auth.verifyToken, auth.updateToken],
+    r_user.changeEmail
 );
 
 app.patch(
-  "/users/:username/password",
-  [auth.verifyToken],
-  r_user.changePassword
+    "/users/:username/password",
+    [auth.verifyToken],
+    r_user.changePassword
+);
+
+app.patch(
+    "/users/:username/profile/description",
+    [auth.verifyToken],
+    r_profile.updateDescription
 );
 
 //User profile endpoints
 app.patch(
-  "/users/:username/profile/coverImage",
-  [auth.verifyToken],
-  r_profile.updateCoverImage
+    "/users/:username/profile/coverImage",
+    [auth.verifyToken],
+    r_profile.updateCoverImage
 );
 
 app.patch(
-  "/users/:username/profile/avatarImage",
-  [auth.verifyToken],
-  r_profile.updateAvatarImage
+    "/users/:username/profile/avatarImage",
+    [auth.verifyToken],
+    r_profile.updateAvatarImage
 );
 
 //Storage endpoints
@@ -80,15 +86,15 @@ app.get("/auth/confirm/:confirmationCode", r_auth.confirmUserEmail);
 app.get("/admin/data/:name", r_admin.fetchData);
 
 app.post(
-  "/admin/data/:name",
-  [auth.verifyToken, auth.adminCheck],
-  r_admin.insertDocument
+    "/admin/data/:name",
+    [auth.verifyToken, auth.adminCheck],
+    r_admin.insertDocument
 );
 
 app.delete(
-  "/admin/data/:name",
-  [auth.verifyToken, auth.adminCheck],
-  r_admin.deleteDocument
+    "/admin/data/:name",
+    [auth.verifyToken, auth.adminCheck],
+    r_admin.deleteDocument
 );
 
 //Unity
