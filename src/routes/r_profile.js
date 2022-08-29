@@ -82,7 +82,6 @@ let updateAvatarImage = async (req, res) => {
 
 //Change user profile avatar image
 let updateDescription = async (req, res) => {
-    console.log("YAY");
     let description = req.body.description;
     let username = req.jwt.username;
     if (description) {
