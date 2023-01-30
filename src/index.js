@@ -101,6 +101,6 @@ app.delete(
 );
 
 //Unity
-app.get("/unity/user/profile:username", r_unity.getUserProfile);
+app.get("/unity/user/profile", r_unity.getUserProfile);
 app.post("/unity/user/profile/game/add", r_unity.addUserProfileGame);
 app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
