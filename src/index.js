@@ -14,8 +14,16 @@ import r_auth from "./routes/r_auth";
 import r_admin from "./routes/r_admin";
 import r_unity from "./routes/r_unity";
 
+import r_storage from "./routes/r_storage.js";
+
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
+
+import multer from "multer";
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+upload.single("avatar");
 
 // Set up EJS
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -35,7 +43,7 @@ app.use(express.json()); //Automatically decode JSON data
 app.set("view engine", "ejs");
 
 app.listen(port, () => {
-  console.log(`Listening on ${port}`);
+  console.log(`Listening on port ${port}`);
 });
 
 //User endpoints
@@ -104,3 +112,9 @@ app.delete(
 app.get("/unity/user/profile", r_unity.getUserProfile);
 app.post("/unity/user/profile/game/add", r_unity.addUserProfileGame);
 app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
+
+//S3 Storage
+app.get("/api/storage/file", async (req, res) => {
+  res.status(200);
+});
+app.post("/api/storage/file", upload.single("image"), r_storage.uploadFile);
