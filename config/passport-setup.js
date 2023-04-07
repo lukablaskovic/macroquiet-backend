@@ -10,6 +10,6 @@ const strategyOptions = {
   scope: ["profile"],
 };
 const verifyCallback = async (accessToken, refreshToken, profile, done) => {
-  // TODO
+  console.log(profile);
 };
 passport.use(new GoogleStrategy(strategyOptions, verifyCallback));
