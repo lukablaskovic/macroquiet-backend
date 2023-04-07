@@ -1,5 +1,5 @@
 import auth from "../auth";
-import connect from "../db.js";
+import connect from "../../services/mongoClient.js";
 
 //Authenticate existing user on Vue.js frontend
 let authWeb = async (req, res) => {
@@ -18,7 +18,6 @@ let authWeb = async (req, res) => {
 };
 //Authenticate existing user on Unity frontend
 let authUnity = async (req, res) => {
-  console.log("Request received");
   let userCredentials = req.body;
   if (!userCredentials) return res.status(400);
   try {
@@ -43,7 +42,7 @@ let confirmUserEmail = async (req, res) => {
       return res.status(404).send({ message: "User Not found." });
     } else {
       if (user.confirmed) {
-        return res.status(400).send("Email already confrimed!");
+        return res.status(400).send("Email already confirmed!");
       } else {
         let result = await db.collection("users").updateOne(
           { confirmationCode: req.params.confirmationCode },
@@ -59,7 +58,6 @@ let confirmUserEmail = async (req, res) => {
       }
     }
   } catch (e) {
-    console.log(7);
     return res.status(503).json({ error: e.message });
   }
 };

@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
-import connect from "./db.js";
-import eMailer from "./eMailer.js";
+import connect from "../services/mongoClient.js";
+import nodemailer from "../services/nodemailer.js";
 
 //Create indexes on boot
 createIndexOnLoad();
@@ -14,8 +14,10 @@ async function createIndexOnLoad() {
   if (!db) {
     throw new Error("Could not connect to the database");
   }
+  //1 - ascending index, -1 descending index
   await db.collection("users").createIndex({ username: 1 }, { unique: true });
   await db.collection("users").createIndex({ email: 1 }, { unique: true });
+  console.log("Successfuly created db indexes.");
 }
 
 export default {
@@ -74,7 +76,7 @@ export default {
       password: await encrypt(userData.password),
       admin: false,
       confirmed: false,
-      confirmationCode: eMailer.generateToken(userData.email),
+      confirmationCode: nodemailer.generateToken(userData.email),
       profile: {
         description: `Hi, I am ${userData.username}. Nice to meet you!`,
         coverImageID: "",
@@ -85,7 +87,7 @@ export default {
     try {
       let result = await db.collection("users").insertOne(doc);
       if (result && result.insertedId) {
-        eMailer.sendConfirmationEmail(
+        nodemailer.sendConfirmationEmail(
           doc.username,
           doc.email,
           doc.confirmationCode
@@ -95,7 +97,6 @@ export default {
     } catch (e) {
       console.log(e);
       if (e.code == 11000) {
-        console.log("ERROR 1100");
         throw new Error("User already exists!");
       }
     }

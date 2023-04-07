@@ -1,4 +1,4 @@
-import connect from "../db.js";
+import connect from "../../services/mongoClient.js";
 import { ObjectId } from "mongodb";
 
 let fetchData = async (req, res) => {

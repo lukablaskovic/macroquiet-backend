@@ -1,4 +1,4 @@
-import connect from "../db.js";
+import connect from "../../services/mongoClient.js";
 
 //Get user data from db
 let getUserProfile = async (req, res) => {

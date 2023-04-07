@@ -1,5 +1,5 @@
 import auth from "../auth";
-import connect from "../db.js";
+import connect from "../../services/mongoClient.js";
 
 //Register new user
 let register = async (req, res) => {

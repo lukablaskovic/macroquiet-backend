@@ -1,4 +1,4 @@
-import S3Client from "../S3Client";
+import S3Client from "../../services/S3Client";
 
 const BUCKET_NAME = process.env.BUCKET_NAME;
 
@@ -15,6 +15,7 @@ let uploadFile = async (req, res) => {
   console.log("req.body", req.body);
   console.log("req.file", req.file);
   //Actual image - req.file.buffer
+
   res.send({});
 };
 export default {
