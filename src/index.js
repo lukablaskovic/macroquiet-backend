@@ -11,7 +11,6 @@ import passportSetup from "../config/passport-setup.js";
 import authRoutes from "./routes/auth-routes.js";
 import macroquietAccountRoutes from "./routes/user/macroquiet-account-routes.js";
 import webVueRoutes from "./routes/user/web-vue-routes.js";
-import fileUploadRoutes from "./routes/file-upload-routes.js";
 
 import r_admin from "./routes/admin-routes.js";
 import r_unity from "./routes/user/in-game-routes.js";
@@ -48,7 +47,6 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", macroquietAccountRoutes);
 app.use("/api/users/profile", webVueRoutes);
-app.use("/api/file", fileUploadRoutes);
 
 /*
 app.patch(
