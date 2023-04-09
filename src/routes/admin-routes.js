@@ -1,5 +1,8 @@
+import { Router } from "express";
 import connect from "../../services/mongoClient.js";
 import { ObjectId } from "mongodb";
+
+const router = Router();
 
 let fetchData = async (req, res) => {
   let db = await connect();

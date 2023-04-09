@@ -7,8 +7,8 @@ import "dotenv/config";
 let transporter = nodemailer.createTransport({
   service: "SendPulse",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.SMTP_LOGIN,
+    pass: process.env.SMTP_PASS,
   },
 });
 function generateToken(userEmail) {
@@ -22,7 +22,7 @@ function generateToken(userEmail) {
   }
 }
 async function sendConfirmationEmail(username, email, confirmationCode) {
-  const url = `https://macroquiet.herokuapp.com/auth/confirm/${confirmationCode}`;
+  const url = `${process.env.URL}/api/auth/confirm/${confirmationCode}`;
   let sendResult = await transporter.sendMail({
     from: "MacroQuiet <noreply@macroquiet.com>",
     to: email,
@@ -33,6 +33,6 @@ async function sendConfirmationEmail(username, email, confirmationCode) {
             
             </div>`,
   });
-  console.log("Email successfuly sent. ID: " + sendResult.messageId);
+  console.log("Email successfuly sent ✅. ID: " + sendResult.messageId);
 }
 export default { generateToken, sendConfirmationEmail };

@@ -6,7 +6,7 @@ const GoogleStrategy = passportGoogle.OAuth2Strategy;
 const strategyOptions = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/redirect",
+  callbackURL: "/api/auth/google/redirect",
   scope: ["profile"],
 };
 const verifyCallback = async (accessToken, refreshToken, profile, done) => {
