@@ -25,22 +25,7 @@ export default {
         return next();
       }
     } catch (e) {
-      return res.status(401).send("Cannot verify token");
-    }
-  },
-  updateToken(req, res, next) {
-    try {
-      let userData = req.body;
-      let tokenDuration = "7d";
-      //New token sent in response
-      req.jwt = jwt.sign(userData, process.env.JWT_SECRET, {
-        algorithm: "HS512",
-        expiresIn: tokenDuration,
-      });
-      console.log("Token updated successfully!");
-      return next();
-    } catch (e) {
-      return res.status(401).send("cannot update token");
+      return res.status(401).send("Unauthorized!");
     }
   },
 

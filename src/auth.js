@@ -21,23 +21,17 @@ export default {
       if (!user.confirmed) {
         throw new Error("Please confirm your email to login!");
       }
-      //Delete fields which won't be included in the token
-      delete user.password;
-      delete user.profile;
-      delete user.admin;
-      delete user.confirmed;
-      delete user.confirmationCode;
+
+      const { _id, email } = user;
+      const tokenPayload = { _id, email };
+
       let tokenDuration = "1d";
       if (rememberMe) tokenDuration = "30d";
 
-      let token = jwt.sign(
-        user, //Included in payload
-        process.env.JWT_SECRET,
-        {
-          algorithm: "HS512",
-          expiresIn: tokenDuration,
-        }
-      );
+      let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+        algorithm: "HS512",
+        expiresIn: tokenDuration,
+      });
       console.log("Successful login!");
 
       return {

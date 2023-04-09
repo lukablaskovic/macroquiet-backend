@@ -21,6 +21,8 @@ async function createIndexOnLoad() {
   console.log("Successfuly created db indexes.");
 }
 
+const usernameChangeInterval = 30; //Days
+
 export default {
   //Register new user
   async register(userData) {
@@ -58,8 +60,10 @@ export default {
     }
   },
 
-  async changePassword(username, old_password, new_password) {
-    let user = await db.collection("users").findOne({ username: username });
+  async changePassword(userID, old_password, new_password) {
+    let user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userID) });
 
     //Check if passwords match
     if (
@@ -88,17 +92,30 @@ export default {
       .findOne({ _id: new ObjectId(userID) });
     if (user) {
       let currentTimestamp = moment();
-      let result = await db.collection("users").updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            username: new_username,
-            username_last_changed: currentTimestamp,
-          },
-          $push: { former_usernames: user.username },
-        }
+
+      let daysSinceLastChange = currentTimestamp.diff(
+        user.username_last_changed,
+        "days"
       );
-      return result.modifiedCount == 1;
+
+      if (
+        daysSinceLastChange >= usernameChangeInterval ||
+        user.username_last_changed === null
+      ) {
+        let result = await db.collection("users").updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              username: new_username,
+              username_last_changed: currentTimestamp,
+            },
+            $push: { former_usernames: user.username },
+          }
+        );
+        return result.modifiedCount == 1;
+      } else {
+        throw new Error("You can't change your username again yet.");
+      }
     }
   },
 };
