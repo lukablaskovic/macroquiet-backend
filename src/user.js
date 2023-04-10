@@ -37,8 +37,10 @@ export default {
       confirmationCode: nodemailer.generateToken(userData.email),
       profile: {
         description: `Hi, I am ${userData.username}. Nice to meet you!`,
-        coverImageURL: "",
-        avatarImageURL: "",
+        image: {
+          avatar: "",
+          cover: "",
+        },
         games: [],
       },
     };
@@ -116,6 +118,29 @@ export default {
       } else {
         throw new Error("You can't change your username again yet.");
       }
+    }
+  },
+
+  async updateImage(userID, publicURL, imgType) {
+    let user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userID) });
+    console.log(userID, publicURL, imgType);
+    try {
+      if (user) {
+        let result = await db.collection("users").updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              [`profile.image.${imgType}`]: publicURL,
+            },
+          }
+        );
+        return result.modifiedCount == 1;
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error(e);
     }
   },
 };

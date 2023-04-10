@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -16,4 +20,4 @@ const S3 = new S3Client({
   region: BUCKET_REGION,
 });
 
-export default { S3, PutObjectCommand };
+export default { S3, PutObjectCommand, GetObjectCommand };
