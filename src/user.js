@@ -21,45 +21,90 @@ async function createIndexOnLoad() {
   console.log("Successfuly created db indexes.");
 }
 
-const usernameChangeInterval = 30; //Days
+const usernameChangeInterval = 30; //in Days
 
+const RegisterMethod = Object.freeze({
+  MacroQuiet: registerMacroQuiet,
+  Google: registerGoogle,
+});
+
+async function registerMacroQuiet(userData) {
+  let doc = {
+    username: userData.username,
+    former_usernames: [],
+    username_last_changed: null,
+    register_method: "MacroQuiet",
+    email: userData.email, //UNIQUE
+    password: await encrypt(userData.password),
+    admin: false,
+    email_confirmed: false,
+    email_confirmation_code: nodemailer.generateToken(userData.email),
+    profile: {
+      description: `Hi, I am ${userData.username}. Nice to meet you!`,
+      image: {
+        avatar: "",
+        cover: "",
+      },
+      games: [],
+    },
+  };
+  try {
+    let result = await db.collection("users").insertOne(doc);
+    if (result && result.insertedId) {
+      nodemailer.sendConfirmationEmail(
+        doc.username,
+        doc.email,
+        doc.email_confirmation_code
+      );
+      return result.insertedId;
+    }
+  } catch (e) {
+    console.log(e);
+    if (e.code == 11000) {
+      throw new Error("User already exists!");
+    }
+  }
+}
+async function registerGoogle(userData) {
+  let doc = {
+    google_id: userData.google_id,
+    username: userData.username,
+    former_usernames: [],
+    username_last_changed: null,
+    register_method: "Google",
+    admin: false,
+    email_confirmed: true,
+    profile: {
+      description: `Hi, I am ${userData.username}. Nice to meet you!`,
+      image: {
+        avatar: "",
+        cover: "",
+      },
+      games: [],
+    },
+  };
+  try {
+    let result = await db.collection("users").insertOne(doc);
+    if (result && result.insertedId) {
+      return result.insertedId;
+    }
+  } catch (e) {
+    console.log(e);
+    if (e.code == 11000) {
+      throw new Error("User already exists!");
+    }
+  }
+}
 export default {
   //Register new user
-  async register(userData) {
-    let doc = {
-      username: userData.username, //Can be changed every x days
-      former_usernames: [],
-      username_last_changed: null,
-      email: userData.email, //UNIQUE
-      password: await encrypt(userData.password),
-      admin: false,
-      confirmed: false,
-      confirmationCode: nodemailer.generateToken(userData.email),
-      profile: {
-        description: `Hi, I am ${userData.username}. Nice to meet you!`,
-        image: {
-          avatar: "",
-          cover: "",
-        },
-        games: [],
-      },
-    };
-    try {
-      let result = await db.collection("users").insertOne(doc);
-      if (result && result.insertedId) {
-        nodemailer.sendConfirmationEmail(
-          doc.username,
-          doc.email,
-          doc.confirmationCode
-        );
-        return result.insertedId;
-      }
-    } catch (e) {
-      console.log(e);
-      if (e.code == 11000) {
-        throw new Error("User already exists!");
-      }
+  //RegisterMethod: MacroQuiet
+  async register(userData, method) {
+    console.log(method);
+    if (!RegisterMethod.hasOwnProperty(method)) {
+      throw new Error("Invalid registration method");
     }
+    const registerFunction = RegisterMethod[method];
+    return registerFunction(userData);
   },
 
   async changePassword(userID, old_password, new_password) {
@@ -142,6 +187,14 @@ export default {
       console.log(e);
       throw new Error(e);
     }
+  },
+  async findUserByID(userID) {
+    let user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userID) });
+    if (user) {
+      return user;
+    } else return null;
   },
 };
 

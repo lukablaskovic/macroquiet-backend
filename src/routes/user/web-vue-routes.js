@@ -7,7 +7,7 @@ import user from "../../user";
 import multer from "multer";
 import S3Client from "../../../services/S3Client.js";
 
-import sharp from "sharp";
+//import sharp from "sharp";
 import crypto from "crypto";
 
 const randomImageName = (bytes = 32) =>
@@ -71,7 +71,7 @@ router.post(
         let command = new S3Client.PutObjectCommand(params);
         await S3Client.S3.send(command);
 
-        let publicURL = `https://macroquiet-images.s3.amazonaws.com/${params.Key}`;
+        let publicURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`;
         //Update image in db
         let storeInDB = await user.updateImage(userID, publicURL, providedType);
         if (storeInDB) res.status(201).send("Image uploaded successfully!");

@@ -40,25 +40,25 @@ router.post("/", async (req, res) => {
 });
 
 //Email confirmation
-router.get("/confirm/:confirmationCode", async (req, res) => {
+router.get("/confirm/:email_confirmation_code", async (req, res) => {
   try {
     let db = await connect();
     let user = await db
       .collection("users")
-      .findOne({ confirmationCode: req.params.confirmationCode });
+      .findOne({ email_confirmation_code: req.params.email_confirmation_code });
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
     } else {
       console.log(user);
-      if (user.confirmed) {
+      if (user.email_confirmed) {
         return res.status(400).send("Email already confirmed!");
       } else {
         //Update database
         let result = await db.collection("users").updateOne(
-          { confirmationCode: req.params.confirmationCode },
+          { email_confirmation_code: req.params.email_confirmation_code },
           {
             $set: {
-              confirmed: true,
+              email_confirmed: true,
             },
           }
         );
@@ -75,16 +75,23 @@ router.get("/confirm/:confirmationCode", async (req, res) => {
 router.get("/logout", (req, res) => {
   res.send("logging out");
 });
+
 //Google SSO
+//Single route: Register + Login
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["profile"],
+    session: false,
   })
 );
 
-router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
-  res.send("You reached the callback URI");
-});
+router.get(
+  "/google/redirect",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    res.status(200).send(`${req.user.token}`);
+  }
+);
 
 export default router;

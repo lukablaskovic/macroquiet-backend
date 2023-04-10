@@ -49,12 +49,6 @@ app.use("/api/users", macroquietAccountRoutes);
 app.use("/api/users/profile", webVueRoutes);
 
 /*
-app.patch(
-  "/users/:username/profile/description",
-  [mw.verifyToken],
-  r_profile.updateDescription
-);
-
 //Admin endpoints
 app.get("/admin/data/:name", r_admin.fetchData);
 

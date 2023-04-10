@@ -13,11 +13,12 @@ These routes are related to general data of MacroQuiet account
 const router = Router();
 
 //Register new MacroQuiet account
+//RegisterMethod: MacroQuiet
 router.post("/", async (req, res) => {
   let userData = req.body;
   let id = "";
   try {
-    id = await user.register(userData);
+    id = await user.register(userData, "MacroQuiet");
     res.status(201).json({ id: id });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -120,4 +121,15 @@ router.put("/current/username", [mdw.verifyToken], async (req, res) => {
   }
 });
 
+//Send password/Forgot password email (non-authenticated user)
+router.put("/current/password", async (req, res) => {
+  let email = req.body.email;
+  try {
+    res
+      .status(200)
+      .send("A password reset email has been sent if such an account exists.");
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
+});
 export default router;

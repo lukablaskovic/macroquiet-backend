@@ -21,8 +21,8 @@ function generateToken(userEmail) {
     console.log(e);
   }
 }
-async function sendConfirmationEmail(username, email, confirmationCode) {
-  const url = `${process.env.URL}/api/auth/confirm/${confirmationCode}`;
+async function sendConfirmationEmail(username, email, email_confirmation_code) {
+  const url = `${process.env.URL}/api/auth/confirm/${email_confirmation_code}`;
   let sendResult = await transporter.sendMail({
     from: "MacroQuiet <noreply@macroquiet.com>",
     to: email,

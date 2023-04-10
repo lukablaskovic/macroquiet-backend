@@ -18,7 +18,12 @@ export default {
   async authenticateUserWeb(email, password, rememberMe) {
     let user = await db.collection("users").findOne({ email: email });
     if (user && user.password && (await checkUser(password, user.password))) {
-      if (!user.confirmed) {
+      if (user.register_method !== "MacroQuiet") {
+        throw new Error(
+          "Can't login. Try using the authentication method you used during sign up."
+        );
+      }
+      if (!user.email_confirmed) {
         throw new Error("Please confirm your email to login!");
       }
 
@@ -60,6 +65,8 @@ export default {
       throw new Error("Wrong username or password!");
     }
   },
+
+  async resetPassword() {},
 };
 
 const saltRounds = 10;
