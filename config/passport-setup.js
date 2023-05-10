@@ -1,7 +1,7 @@
 import passport from "passport";
 import passportGoogle from "passport-google-oauth";
 import user from "../src/user";
-import jwt from "jsonwebtoken";
+import JWT from "../services/JWT.js";
 
 const GoogleStrategy = passportGoogle.OAuth2Strategy;
 
@@ -17,33 +17,19 @@ const verifyGoogleCallback = async (
   profile,
   done
 ) => {
-  console.log(profile);
-  let google_id = profile.id;
-  let username = profile.displayName || profile.username;
-
+  let userData = {
+    google_id: profile.id,
+    username: profile.displayName || profile.username,
+  };
   try {
-    const userID = await user.register({ google_id, username }, "Google");
-    if (userID) {
-      const token = generateJWT(userID);
+    const result = await user.register(userData, "Google");
+    if (result) {
+      const tokenPayload = { _id: result._id, google_id: result.google_id };
+      const token = await JWT.generate(tokenPayload);
       done(null, { token });
-    } else {
-      throw new Error("User not found or not unique");
     }
   } catch (error) {
-    console.error("Error during registration:", error.message);
     done(error, null);
   }
 };
 passport.use(new GoogleStrategy(strategyOptions, verifyGoogleCallback));
-
-const generateJWT = (userID) => {
-  const tokenPayload = { userID };
-
-  let tokenDuration = "7d";
-
-  let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-    algorithm: "HS512",
-    expiresIn: tokenDuration,
-  });
-  return token;
-};

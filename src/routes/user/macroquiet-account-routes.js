@@ -2,7 +2,7 @@ import { Router } from "express";
 import user from "../../user";
 import connect from "../../../services/mongoClient.js";
 
-import mdw from "../../middlewares";
+import JWT from "../../../services/JWT";
 import { ObjectId } from "mongodb";
 
 /*
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 
 //Get specific user data
-router.get("/:id", [mdw.verifyToken], async (req, res) => {
+router.get("/:id", [JWT.verifyToken], async (req, res) => {
   let userID = req.params.id;
   try {
     let db = await connect();
@@ -53,7 +53,7 @@ router.get("/:id", [mdw.verifyToken], async (req, res) => {
 });
 
 //Get user data (authenticated user)
-router.get("/current/profile", [mdw.verifyToken], async (req, res) => {
+router.get("/current/profile", [JWT.verifyToken], async (req, res) => {
   const userID = req.jwt._id;
 
   try {
@@ -66,6 +66,7 @@ router.get("/current/profile", [mdw.verifyToken], async (req, res) => {
       _id: user._id,
       username: user.username,
       former_usernames: user.former_usernames,
+      register_method: user.register_method,
       username_last_changed: user.username_last_changed,
       email: user.email,
       admin: user.admin,
@@ -78,7 +79,7 @@ router.get("/current/profile", [mdw.verifyToken], async (req, res) => {
 });
 
 //Change current user password (authenticated user)
-router.put("/current/password", [mdw.verifyToken], async (req, res) => {
+router.put("/current/password", [JWT.verifyToken], async (req, res) => {
   const userID = req.jwt._id;
   let passwords = req.body;
   try {
@@ -99,7 +100,7 @@ router.put("/current/password", [mdw.verifyToken], async (req, res) => {
   }
 });
 //Change current user username (authenticated user)
-router.put("/current/username", [mdw.verifyToken], async (req, res) => {
+router.put("/current/username", [JWT.verifyToken], async (req, res) => {
   const userID = req.jwt._id;
   let { new_username } = req.body;
 

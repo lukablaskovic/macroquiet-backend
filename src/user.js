@@ -18,7 +18,6 @@ async function createIndexOnLoad() {
   //1 - ascending index, -1 descending index
   await db.collection("users").createIndex({ username: 1 }, { unique: true });
   await db.collection("users").createIndex({ email: 1 }, { unique: true });
-  console.log("Successfuly created db indexes.");
 }
 
 const usernameChangeInterval = 30; //in Days
@@ -59,7 +58,6 @@ async function registerMacroQuiet(userData) {
       return result.insertedId;
     }
   } catch (e) {
-    console.log(e);
     if (e.code == 11000) {
       throw new Error("User already exists!");
     }
@@ -85,21 +83,21 @@ async function registerGoogle(userData) {
   };
   try {
     let result = await db.collection("users").insertOne(doc);
+    //Add new user
     if (result && result.insertedId) {
-      return result.insertedId;
+      return { _id: result.insertedId, google_id: userData.google_id };
     }
-  } catch (e) {
-    console.log(e);
-    if (e.code == 11000) {
-      throw new Error("User already exists!");
-    }
+  } catch {
+    //User already exists
+    let user = await db
+      .collection("users")
+      .findOne({ google_id: userData.google_id });
+    return user;
   }
 }
 export default {
   //Register new user
-  //RegisterMethod: MacroQuiet
   async register(userData, method) {
-    console.log(method);
     if (!RegisterMethod.hasOwnProperty(method)) {
       throw new Error("Invalid registration method");
     }
@@ -170,7 +168,6 @@ export default {
     let user = await db
       .collection("users")
       .findOne({ _id: new ObjectId(userID) });
-    console.log(userID, publicURL, imgType);
     try {
       if (user) {
         let result = await db.collection("users").updateOne(
@@ -184,7 +181,6 @@ export default {
         return result.modifiedCount == 1;
       }
     } catch (e) {
-      console.log(e);
       throw new Error(e);
     }
   },

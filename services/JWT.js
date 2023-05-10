@@ -10,8 +10,14 @@ async function connectDatabase() {
   }
 }
 connectDatabase();
-
 export default {
+  async generate(tokenPayload, tokenDuration = "30d") {
+    let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      algorithm: "HS512",
+      expiresIn: tokenDuration,
+    });
+    return token;
+  },
   verifyToken(req, res, next) {
     try {
       let authorization = req.headers.authorization.split(" ");

@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import "dotenv/config";
 
 import connect from "../services/mongoClient.js";
+import JWT from "../services/JWT.js";
 
 let db = null;
 async function connectDatabase() {
@@ -26,18 +26,9 @@ export default {
       if (!user.email_confirmed) {
         throw new Error("Please confirm your email to login!");
       }
+      const tokenPayload = { _id: user._id, email: user.email };
 
-      const { _id, email } = user;
-      const tokenPayload = { _id, email };
-
-      let tokenDuration = "1d";
-      if (rememberMe) tokenDuration = "30d";
-
-      let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-        algorithm: "HS512",
-        expiresIn: tokenDuration,
-      });
-      console.log("Successful login!");
+      let token = await JWT.generate(tokenPayload);
 
       return {
         token,
@@ -49,6 +40,8 @@ export default {
       throw new Error("Wrong username or password!");
     }
   },
+  //Password reset
+  async resetPassword() {},
   //Authenticate user for Unity interface
   async authenticateUserUnity(email, password) {
     let user = await db.collection("users").findOne({ email: email });
@@ -56,7 +49,6 @@ export default {
       throw new Error("User doesn't exist!");
     }
     if (await checkUser(password, user.password)) {
-      console.log("Successful login!");
       return {
         email: user.email,
         username: user.username,
@@ -65,8 +57,6 @@ export default {
       throw new Error("Wrong username or password!");
     }
   },
-
-  async resetPassword() {},
 };
 
 const saltRounds = 10;

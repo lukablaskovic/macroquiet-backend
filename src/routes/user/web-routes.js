@@ -1,5 +1,5 @@
 import { Router } from "express";
-import mdw from "../../middlewares";
+import JWT from "../../../services/JWT";
 
 import connect from "../../../services/mongoClient.js";
 import user from "../../user";
@@ -25,7 +25,7 @@ const imgTypes = Array.of("avatar", "cover");
 const router = Router();
 
 //Update current user profile description (authenticated user)
-router.put("/description", [mdw.verifyToken], async (req, res) => {
+router.put("/description", [JWT.verifyToken], async (req, res) => {
   let description = req.body.description;
   let email = req.jwt.email;
   if (description) {
@@ -54,7 +54,7 @@ router.put("/description", [mdw.verifyToken], async (req, res) => {
 //Upload current user image (cover or avatar) (authenticated user)
 router.post(
   "/image",
-  [mdw.verifyToken, upload.single("image")], //upload.single(key)
+  [JWT.verifyToken, upload.single("image")], //upload.single(key)
   async (req, res) => {
     const userID = req.jwt._id;
     let providedType = String(req.body.type);
