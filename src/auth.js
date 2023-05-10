@@ -4,18 +4,16 @@ import "dotenv/config";
 import connect from "./services/mongoClient.js";
 import JWT from "./services/JWT.js";
 
-let db = null;
-async function connectDatabase() {
+(async () => {
   try {
-    db = await connect();
+    let db = await connect();
     if (!db) {
       throw new Error("Could not connect to the database");
     }
   } catch (e) {
     console.log(e);
   }
-}
-await connectDatabase();
+})();
 
 export default {
   //Authenticate user and send JWT token

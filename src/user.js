@@ -6,24 +6,19 @@ import nodemailer from "./services/nodemailer.js";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 
-async function createIndexOnLoad() {
+(async () => {
   try {
-    db = await connect();
-    if (!db) {
-      throw new Error("Could not connect to the database");
-    }
-    //1 - ascending index, -1 descending index
+    let db = await connect();
     await db.collection("users").createIndex({ username: 1 }, { unique: true });
     await db.collection("users").createIndex({ email: 1 }, { unique: true });
     console.log("Successfully created indexes!");
+    if (!db) {
+      throw new Error("Could not connect to the database");
+    }
   } catch (e) {
     console.log(e);
   }
-}
-
-//Create indexes on boot
-await createIndexOnLoad();
-let db = null;
+})();
 
 const usernameChangeInterval = 30; //in Days
 

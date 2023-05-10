@@ -3,18 +3,17 @@ import "dotenv/config";
 import connect from "./mongoClient";
 import { ObjectId } from "mongodb";
 
-let db = null;
-async function connectDatabase() {
+(async () => {
   try {
-    db = await connect();
+    let db = await connect();
     if (!db) {
       throw new Error("Could not connect to the database");
     }
   } catch (e) {
     console.log(e);
   }
-}
-await connectDatabase();
+})();
+
 export default {
   async generate(tokenPayload, tokenDuration = "30d") {
     let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
