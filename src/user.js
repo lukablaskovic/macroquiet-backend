@@ -5,10 +5,10 @@ import connect from "./services/mongoClient.js";
 import nodemailer from "./services/nodemailer.js";
 import { ObjectId } from "mongodb";
 import moment from "moment";
-
+let db = null;
 (async () => {
   try {
-    let db = await connect();
+    db = await connect();
     await db.collection("users").createIndex({ username: 1 }, { unique: true });
     await db.collection("users").createIndex({ email: 1 }, { unique: true });
     console.log("Successfully created indexes!");

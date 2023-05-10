@@ -3,9 +3,10 @@ import "dotenv/config";
 import connect from "./mongoClient";
 import { ObjectId } from "mongodb";
 
+let db = null;
 (async () => {
   try {
-    let db = await connect();
+    db = await connect();
     if (!db) {
       throw new Error("Could not connect to the database");
     }
