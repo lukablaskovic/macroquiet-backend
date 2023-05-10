@@ -6,10 +6,6 @@ import nodemailer from "./services/nodemailer.js";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 
-//Create indexes on boot
-await createIndexOnLoad();
-let db = null;
-
 async function createIndexOnLoad() {
   try {
     db = await connect();
@@ -24,6 +20,10 @@ async function createIndexOnLoad() {
     console.log(e);
   }
 }
+
+//Create indexes on boot
+await createIndexOnLoad();
+let db = null;
 
 const usernameChangeInterval = 30; //in Days
 
