@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import connect from "../services/mongoClient";
+import { ObjectId } from "mongodb";
 
 let db = null;
 async function connectDatabase() {
@@ -40,9 +41,22 @@ export default {
       let userData = req.jwt;
       let user = await db
         .collection("users")
-        .findOne({ username: userData.username });
+        .findOne({ _id: new ObjectId(userData._id) });
       if (!user.admin) {
         res.status(401).send("Unauthorized!");
+      } else return next();
+    } catch (e) {
+      res.send(e);
+    }
+  },
+  async regMethodCheck(req, res, next) {
+    try {
+      let userData = req.jwt;
+      let user = await db
+        .collection("users")
+        .findOne({ _id: new ObjectId(userData._id) });
+      if (user.register_method !== "MacroQuiet") {
+        res.status(400).send("Cannot change!");
       } else return next();
     } catch (e) {
       res.send(e);

@@ -79,26 +79,32 @@ router.get("/current/profile", [JWT.verifyToken], async (req, res) => {
 });
 
 //Change current user password (authenticated user)
-router.put("/current/password", [JWT.verifyToken], async (req, res) => {
-  const userID = req.jwt._id;
-  let passwords = req.body;
-  try {
-    if (userID && passwords.new_password && passwords.old_password) {
-      let result = await user.changePassword(
-        userID,
-        passwords.old_password,
-        passwords.new_password
-      );
-      if (result) {
-        res.status(200).send({ message: "Password successfully changed." });
+router.put(
+  "/current/password",
+  [JWT.verifyToken, JWT.regMethodCheck],
+  async (req, res) => {
+    const userID = req.jwt._id;
+    let passwords = req.body;
+    try {
+      if (userID && passwords.new_password && passwords.old_password) {
+        let result = await user.changePassword(
+          userID,
+          passwords.old_password,
+          passwords.new_password
+        );
+        if (result) {
+          res.status(200).send({ message: "Password successfully changed." });
+        }
+      } else {
+        res
+          .status(400)
+          .json({ error: "Query input is not of correct format." });
       }
-    } else {
-      res.status(400).json({ error: "Query input is not of correct format." });
+    } catch (e) {
+      res.status(400).send({ error: e.message });
     }
-  } catch (e) {
-    res.status(400).send({ error: e.message });
   }
-});
+);
 //Change current user username (authenticated user)
 router.put("/current/username", [JWT.verifyToken], async (req, res) => {
   const userID = req.jwt._id;

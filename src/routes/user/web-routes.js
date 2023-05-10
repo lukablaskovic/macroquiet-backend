@@ -19,8 +19,6 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 upload.single("avatar");
 
-const imgTypes = Array.of("avatar", "cover");
-
 // --> /api/users/profile
 const router = Router();
 
@@ -51,8 +49,10 @@ router.put("/description", [JWT.verifyToken], async (req, res) => {
     res.status(400);
   }
 });
+
+const imgTypes = Array.of("avatar", "cover");
 //Upload current user image (cover or avatar) (authenticated user)
-router.post(
+router.put(
   "/image",
   [JWT.verifyToken, upload.single("image")], //upload.single(key)
   async (req, res) => {

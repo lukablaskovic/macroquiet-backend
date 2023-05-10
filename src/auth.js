@@ -15,7 +15,7 @@ connectDatabase();
 
 export default {
   //Authenticate user and send JWT token
-  async authenticateUserWeb(email, password, rememberMe) {
+  async authenticateUser(email, password, rememberMe = false) {
     let user = await db.collection("users").findOne({ email: email });
     if (user && user.password && (await checkUser(password, user.password))) {
       if (user.register_method !== "MacroQuiet") {
@@ -42,7 +42,10 @@ export default {
   },
   //Password reset
   async resetPassword() {},
+
+  //FOR DELETE
   //Authenticate user for Unity interface
+  /*
   async authenticateUserUnity(email, password) {
     let user = await db.collection("users").findOne({ email: email });
     if (!user) {
@@ -57,6 +60,7 @@ export default {
       throw new Error("Wrong username or password!");
     }
   },
+  */
 };
 
 const saltRounds = 10;

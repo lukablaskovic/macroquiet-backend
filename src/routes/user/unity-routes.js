@@ -1,7 +1,11 @@
+import { Router } from "express";
 import connect from "../../../services/mongoClient.js";
 
-//Get user data from db
-let getUserProfile = async (req, res) => {
+// --> /api/users/games
+const router = Router();
+
+//Get user game profile from db
+router.get("/", async (req, res) => {
   let query = String(req.query.username);
   try {
     let db = await connect();
@@ -15,9 +19,9 @@ let getUserProfile = async (req, res) => {
     res.status(500).json({ error: e.message });
     return;
   }
-};
+});
 
-let addUserProfileGame = async (req, res) => {
+router.post("/add", async (req, res) => {
   let changes = req.body;
   let game = JSON.parse(changes.game);
 
@@ -39,11 +43,11 @@ let addUserProfileGame = async (req, res) => {
       return result.modifiedCount == 1;
     }
   } catch (e) {
-    console.log(e);
+    res.status(400).send(e);
   }
-};
+});
 
-let updateUserProfileGame = async (req, res) => {
+router.post("/update", async (req, res) => {
   let changes = req.body;
   let game = JSON.parse(changes.game);
 
@@ -63,10 +67,6 @@ let updateUserProfileGame = async (req, res) => {
     res.send("Success!");
     return result.modifiedCount == 1;
   }
-};
+});
 
-export default {
-  getUserProfile,
-  addUserProfileGame,
-  updateUserProfileGame,
-};
+export default router;

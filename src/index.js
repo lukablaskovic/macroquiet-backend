@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import * as path from "path";
 import "dotenv/config";
-import mw from "./middlewares";
 import passportSetup from "../config/passport-setup.js";
 
 //Routes
@@ -11,9 +10,8 @@ import passportSetup from "../config/passport-setup.js";
 import authRoutes from "./routes/auth-routes.js";
 import macroquietAccountRoutes from "./routes/user/macroquiet-account-routes.js";
 import webRoutes from "./routes/user/web-routes.js";
-
-import r_admin from "./routes/admin-routes.js";
-import r_unity from "./routes/user/unity-routes.js";
+import unityRoutes from "./routes/user/unity-routes.js";
+import adminRoutes from "./routes/admin-routes";
 
 const app = express();
 const port = process.env.PORT;
@@ -47,25 +45,5 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", macroquietAccountRoutes);
 app.use("/api/users/profile", webRoutes);
-
-/*
-//Admin endpoints
-app.get("/admin/data/:name", r_admin.fetchData);
-
-app.post(
-  "/admin/data/:name",
-  [mw.verifyToken, mw.adminCheck],
-  r_admin.insertDocument
-);
-
-app.delete(
-  "/admin/data/:name",
-  [mw.verifyToken, mw.adminCheck],
-  r_admin.deleteDocument
-);
-
-//Unity
-app.get("/unity/user/profile", r_unity.getUserProfile);
-app.post("/unity/user/profile/game/add", r_unity.addUserProfileGame);
-app.post("/unity/user/profile/game/update", r_unity.updateUserProfileGame);
-*/
+app.use("/api/users/games/", unityRoutes);
+app.use("/api/admin", adminRoutes);

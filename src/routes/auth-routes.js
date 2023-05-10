@@ -10,23 +10,12 @@ const router = Router();
 router.post("/", async (req, res) => {
   let userCredentials = req.body;
   if (!userCredentials) return res.status(400);
-  let type = "web";
   try {
-    let userData;
-    if (type === "web") {
-      userData = await auth.authenticateUserWeb(
-        userCredentials.email,
-        userCredentials.password,
-        userCredentials.rememberMe
-      );
-    } else if (type === "unity") {
-      userData = await auth.authenticateUserUnity(
-        userCredentials.email,
-        userCredentials.password
-      );
-    } else {
-      throw new Error("Invalid authentication type");
-    }
+    let userData = await auth.authenticateUser(
+      userCredentials.email,
+      userCredentials.password,
+      userCredentials.rememberMe
+    );
     return res.status(200).json(userData);
   } catch (e) {
     if (e.message === "User doesn't exist!") {
@@ -49,7 +38,6 @@ router.get("/confirm/:email_confirmation_code", async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
     } else {
-      console.log(user);
       if (user.email_confirmed) {
         return res.status(400).send("Email already confirmed!");
       } else {
@@ -70,10 +58,6 @@ router.get("/confirm/:email_confirmation_code", async (req, res) => {
   } catch (e) {
     return res.status(503).json({ error: e.message });
   }
-});
-
-router.get("/logout", (req, res) => {
-  res.send("logging out");
 });
 
 //Google SSO
