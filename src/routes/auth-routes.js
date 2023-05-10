@@ -2,7 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import auth from "../auth";
 import connect from "../../services/mongoClient.js";
-
+import JWT from "../../services/JWT";
 // /api/auth
 const router = Router();
 
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
 });
 
 //Email confirmation
-router.get("/confirm/:email_confirmation_code", async (req, res) => {
+router.get("/confirm-email/:email_confirmation_code", async (req, res) => {
   try {
     let db = await connect();
     let user = await db
@@ -57,6 +57,21 @@ router.get("/confirm/:email_confirmation_code", async (req, res) => {
     }
   } catch (e) {
     return res.status(503).json({ error: e.message });
+  }
+});
+
+//Validate new password token and reset password
+router.get("/reset-password/:password_reset_code", async (req, res) => {
+  try {
+    let token = req.params.password_reset_code;
+    let valid = JWT.verifyPassResetToken(token);
+    if (valid) {
+      res
+        .status(200)
+        .redirect(`https://macroquiet.com/reset-password/${token}`);
+    }
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
   }
 });
 

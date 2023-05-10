@@ -6,7 +6,6 @@ import "dotenv/config";
 import passportSetup from "../config/passport-setup.js";
 
 //Routes
-
 import authRoutes from "./routes/auth-routes.js";
 import macroquietAccountRoutes from "./routes/user/macroquiet-account-routes.js";
 import webRoutes from "./routes/user/web-routes.js";
@@ -41,7 +40,6 @@ app.get("/", (req, res) => {
 });
 /////////////////////////////////////////////////////////////
 
-//User authentication
 app.use("/api/auth", authRoutes);
 app.use("/api/users", macroquietAccountRoutes);
 app.use("/api/users/profile", webRoutes);

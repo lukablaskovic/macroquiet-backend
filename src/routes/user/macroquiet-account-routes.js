@@ -4,9 +4,10 @@ import connect from "../../../services/mongoClient.js";
 
 import JWT from "../../../services/JWT";
 import { ObjectId } from "mongodb";
+import nodemailer from "../../../services/nodemailer";
 
 /*
-These routes are related to general data of MacroQuiet account
+These routes are related to general MacroQuiet account
 */
 
 // --> /api/users
@@ -26,20 +27,15 @@ router.post("/", async (req, res) => {
 });
 
 //Get specific user data
-router.get("/:id", [JWT.verifyToken], async (req, res) => {
-  let userID = req.params.id;
+router.get("/:username", [JWT.verifyToken], async (req, res) => {
+  let username = req.params.username;
   try {
     let db = await connect();
-    let user = await db
-      .collection("users")
-      .findOne({ _id: new ObjectId(userID) });
+    let user = await db.collection("users").findOne({ username: username });
     if (user) {
       let userData = {
-        id: user._id,
         username: user.username,
         former_usernames: user.former_usernames,
-        username_last_changed: user.username_last_changed,
-        email: user.email,
         admin: user.admin,
         profile: user.profile,
       };
@@ -89,8 +85,9 @@ router.put(
       if (userID && passwords.new_password && passwords.old_password) {
         let result = await user.changePassword(
           userID,
+          passwords.new_password,
           passwords.old_password,
-          passwords.new_password
+          false
         );
         if (result) {
           res.status(200).send({ message: "Password successfully changed." });
@@ -113,12 +110,13 @@ router.put("/current/username", [JWT.verifyToken], async (req, res) => {
   try {
     if (new_username) {
       let result = await user.changeUsername(userID, new_username);
-      if (result) {
-        let userData = result;
-
-        res.status(200).json(userData);
+      if (result === true) {
+        res.status(200).json(new_username);
       } else {
-        res.status(500).json({ error: "Cannot change username!" });
+        res.status(400).json({
+          error: "Cannot change username!",
+          usernameChangeWaitDays: result,
+        });
       }
     } else {
       res.status(400).json({ error: "Query input is not of correct format." });
@@ -128,10 +126,17 @@ router.put("/current/username", [JWT.verifyToken], async (req, res) => {
   }
 });
 
-//Send password/Forgot password email (non-authenticated user)
-router.put("/current/password", async (req, res) => {
-  let email = req.body.email;
+//Send password/Forgot password REQUEST (non-authenticated user)
+router.post("/resetpassword", async (req, res) => {
+  let db = await connect();
+
   try {
+    let user = await db.collection("users").findOne({ email: req.body.email });
+
+    if (user) {
+      let token = JWT.generatePassResetToken(user._id);
+      nodemailer.sendPasswordResetEmail(user.username, user.email, token);
+    }
     res
       .status(200)
       .send("A password reset email has been sent if such an account exists.");
@@ -139,4 +144,27 @@ router.put("/current/password", async (req, res) => {
     res.status(400).send({ error: e.message });
   }
 });
+
+//Reset the password for non authenticated users, receives token and new password
+router.put("/resetpassword", async (req, res) => {
+  let token = req.body.token;
+  let new_password = req.body.new_password;
+
+  try {
+    let decoded = JWT.verifyPassResetToken(token);
+    if (decoded) {
+      let userID = decoded.userID;
+      console.log(userID);
+      let result = await user.changePassword(userID, new_password, null, true);
+      if (result) {
+        res.status(200).send({ message: "Password successfully changed." });
+      } else {
+        res.status(500);
+      }
+    }
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
+});
+
 export default router;

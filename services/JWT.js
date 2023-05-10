@@ -19,6 +19,28 @@ export default {
     });
     return token;
   },
+  generatePassResetToken(userID) {
+    try {
+      let passwordToken = jwt.sign(
+        { userID: userID, timestamp: new Date().getTime() },
+        process.env.JWT_EMAIL_SECRET,
+        { algorithm: "HS512", expiresIn: "1h" }
+      );
+      return passwordToken;
+    } catch (e) {
+      throw new Error("Server error!");
+    }
+  },
+  verifyPassResetToken(token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_EMAIL_SECRET);
+      console.log(decoded);
+      return decoded;
+    } catch (e) {
+      throw new Error("Invalid or expired token!");
+    }
+  },
+
   verifyToken(req, res, next) {
     try {
       let authorization = req.headers.authorization.split(" ");

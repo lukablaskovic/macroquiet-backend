@@ -27,7 +27,17 @@ router.get(
   async (req, res) => {
     let db = await connect();
     let dataName = String(req.params.name);
-    let filter = req.query;
+    let filter = {};
+    for (const [key, value] of Object.entries(req.query)) {
+      filter[key] =
+        value === "true"
+          ? true
+          : value === "false"
+          ? false
+          : isNaN(value)
+          ? value
+          : parseInt(value);
+    }
     try {
       let cursor = await db.collection(dataName).find(filter);
       let result = await cursor.toArray();
@@ -37,6 +47,7 @@ router.get(
     }
   }
 );
+
 //Insert new document
 router.post(
   "/data/:collectionName",

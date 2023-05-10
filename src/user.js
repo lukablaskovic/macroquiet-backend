@@ -105,17 +105,13 @@ export default {
     return registerFunction(userData);
   },
 
-  async changePassword(userID, old_password, new_password) {
+  async changePassword(userID, new_password, old_password, reset) {
     let user = await db
       .collection("users")
       .findOne({ _id: new ObjectId(userID) });
 
-    //Check if passwords match
-    if (
-      user &&
-      user.password &&
-      (await checkUser(old_password, user.password))
-    ) {
+    //Password reset
+    if (user && reset) {
       let new_password_hashed = await encrypt(new_password);
       let result = await db.collection("users").updateOne(
         { _id: user._id },
@@ -127,7 +123,26 @@ export default {
       );
       return result.modifiedCount == 1;
     } else {
-      throw new Error("The old password you entered is incorrect.");
+      //Authenticated reset
+      //Check if passwords match
+      if (
+        user &&
+        user.password &&
+        (await checkUser(old_password, user.password))
+      ) {
+        let new_password_hashed = await encrypt(new_password);
+        let result = await db.collection("users").updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              password: new_password_hashed,
+            },
+          }
+        );
+        return result.modifiedCount == 1;
+      } else {
+        throw new Error("The old password you entered is incorrect.");
+      }
     }
   },
 
@@ -157,9 +172,12 @@ export default {
             $push: { former_usernames: user.username },
           }
         );
-        return result.modifiedCount == 1;
+        return {
+          result: result.modifiedCount == 1,
+        };
+        //Must wait
       } else {
-        throw new Error("You can't change your username again yet.");
+        return String(usernameChangeInterval - daysSinceLastChange);
       }
     }
   },
