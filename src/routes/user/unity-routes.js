@@ -1,5 +1,5 @@
 import { Router } from "express";
-import connect from "../../../services/mongoClient.js";
+import connect from "../../services/mongoClient.js";
 
 // --> /api/users/games
 const router = Router();

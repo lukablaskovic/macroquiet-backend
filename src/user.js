@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import "dotenv/config";
 
-import connect from "../services/mongoClient.js";
-import nodemailer from "../services/nodemailer.js";
+import connect from "./services/mongoClient.js";
+import nodemailer from "./services/nodemailer.js";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 

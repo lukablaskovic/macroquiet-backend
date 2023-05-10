@@ -1,10 +1,10 @@
 import { Router } from "express";
 import user from "../../user";
-import connect from "../../../services/mongoClient.js";
+import connect from "../../services/mongoClient.js";
 
-import JWT from "../../../services/JWT";
+import JWT from "../../services/JWT";
 import { ObjectId } from "mongodb";
-import nodemailer from "../../../services/nodemailer";
+import nodemailer from "../../services/nodemailer";
 
 /*
 These routes are related to general MacroQuiet account

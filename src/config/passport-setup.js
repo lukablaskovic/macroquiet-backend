@@ -1,6 +1,6 @@
 import passport from "passport";
 import passportGoogle from "passport-google-oauth";
-import user from "../src/user";
+import user from "../user";
 import JWT from "../services/JWT.js";
 
 const GoogleStrategy = passportGoogle.OAuth2Strategy;

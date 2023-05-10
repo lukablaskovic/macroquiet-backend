@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import * as path from "path";
 import "dotenv/config";
-import passportSetup from "../config/passport-setup.js";
+import passportSetup from "./config/passport-setup";
 
 //Routes
 import authRoutes from "./routes/auth-routes.js";

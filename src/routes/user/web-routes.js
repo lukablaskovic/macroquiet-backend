@@ -1,11 +1,11 @@
 import { Router } from "express";
-import JWT from "../../../services/JWT";
+import JWT from "../../services/JWT";
 
-import connect from "../../../services/mongoClient.js";
+import connect from "../../services/mongoClient.js";
 import user from "../../user";
 
 import multer from "multer";
-import S3Client from "../../../services/S3Client.js";
+import S3Client from "../../services/S3Client";
 
 //import sharp from "sharp";
 import crypto from "crypto";

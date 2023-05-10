@@ -1,8 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
 import auth from "../auth";
-import connect from "../../services/mongoClient.js";
-import JWT from "../../services/JWT";
+import connect from "../services/mongoClient.js";
+import JWT from "../services/JWT";
 // /api/auth
 const router = Router();
 

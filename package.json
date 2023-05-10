@@ -20,13 +20,6 @@
   },
   "homepage": "https://github.com/lukablaskovic/stranded-away-backend#readme",
   "dependencies": {
-    "@babel/cli": "^7.18.10",
-    "@babel/core": "^7.18.10",
-    "@babel/node": "^7.18.10",
-    "@babel/plugin-transform-runtime": "^7.18.10",
-    "@babel/preset-env": "^7.18.10",
-    "@babel/runtime": "^7.18.9",
-    "babel-core": "^7.0.0-bridge.0",
     "@aws-sdk/client-s3": "^3.282.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
@@ -43,6 +36,13 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/node": "^7.18.10",
+    "@babel/plugin-transform-runtime": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/runtime": "^7.18.9",
+    "babel-core": "^7.0.0-bridge.0",
     "nodemon": "^2.0.21"
   }
 }

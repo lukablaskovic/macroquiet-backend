@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import connect from "../services/mongoClient";
+import connect from "./mongoClient";
 import { ObjectId } from "mongodb";
 
 let db = null;

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import connect from "../../services/mongoClient.js";
+import connect from "../services/mongoClient.js";
 import { ObjectId } from "mongodb";
-import JWT from "../../services/JWT.js";
+import JWT from "../services/JWT.js";
 import multer from "multer";
-import S3Client from "../../services/S3Client.js";
+import S3Client from "../services/S3Client.js";
 
 //import sharp from "sharp";
 import crypto from "crypto";
