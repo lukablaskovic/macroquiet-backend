@@ -11,13 +11,15 @@ createIndexOnLoad();
 let db = null;
 
 async function createIndexOnLoad() {
-  db = await connect();
-  if (!db) {
-    throw new Error("Could not connect to the database");
-  }
-  //1 - ascending index, -1 descending index
-  await db.collection("users").createIndex({ username: 1 }, { unique: true });
-  await db.collection("users").createIndex({ email: 1 }, { unique: true });
+  try {
+    db = await connect();
+    if (!db) {
+      throw new Error("Could not connect to the database");
+    }
+    //1 - ascending index, -1 descending index
+    await db.collection("users").createIndex({ username: 1 }, { unique: true });
+    await db.collection("users").createIndex({ email: 1 }, { unique: true });
+  } catch (e) {}
 }
 
 const usernameChangeInterval = 30; //in Days

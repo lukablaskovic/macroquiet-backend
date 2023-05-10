@@ -5,10 +5,12 @@ import { ObjectId } from "mongodb";
 
 let db = null;
 async function connectDatabase() {
-  db = await connect();
-  if (!db) {
-    throw new Error("Could not connect to the database");
-  }
+  try {
+    db = await connect();
+    if (!db) {
+      throw new Error("Could not connect to the database");
+    }
+  } catch (e) {}
 }
 connectDatabase();
 export default {

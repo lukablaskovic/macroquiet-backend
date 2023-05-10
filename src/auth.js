@@ -6,10 +6,12 @@ import JWT from "./services/JWT.js";
 
 let db = null;
 async function connectDatabase() {
-  db = await connect();
-  if (!db) {
-    throw new Error("Could not connect to the database");
-  }
+  try {
+    db = await connect();
+    if (!db) {
+      throw new Error("Could not connect to the database");
+    }
+  } catch (e) {}
 }
 connectDatabase();
 
@@ -40,27 +42,6 @@ export default {
       throw new Error("Wrong username or password!");
     }
   },
-  //Password reset
-  async resetPassword() {},
-
-  //FOR DELETE
-  //Authenticate user for Unity interface
-  /*
-  async authenticateUserUnity(email, password) {
-    let user = await db.collection("users").findOne({ email: email });
-    if (!user) {
-      throw new Error("User doesn't exist!");
-    }
-    if (await checkUser(password, user.password)) {
-      return {
-        email: user.email,
-        username: user.username,
-      };
-    } else {
-      throw new Error("Wrong username or password!");
-    }
-  },
-  */
 };
 
 const saltRounds = 10;
