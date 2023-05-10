@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+import { MongoClient } from "mongodb";
 import "dotenv/config";
 
 let connection_string = process.env.MONGO_CONNECTION_STRING;
@@ -10,6 +10,7 @@ export default () => {
     client.connect((err) => {
       if (err) {
         reject("Database connection failed!");
+        console.log(err);
       } else {
         console.log("Database connected successfully!");
         db = client.db("macroquiet");
