@@ -36,7 +36,8 @@ app.listen(port, () => {
 });
 //Service status
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/index.html"));
+  //res.sendFile(path.join(__dirname, "/views/index.html"));
+  res.status(200).send("MacroQuiet server - Up and Running ✅");
 });
 /////////////////////////////////////////////////////////////
 
