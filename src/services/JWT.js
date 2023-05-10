@@ -10,9 +10,11 @@ async function connectDatabase() {
     if (!db) {
       throw new Error("Could not connect to the database");
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 }
-connectDatabase();
+await connectDatabase();
 export default {
   async generate(tokenPayload, tokenDuration = "30d") {
     let token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {

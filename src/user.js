@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 import moment from "moment";
 
 //Create indexes on boot
-createIndexOnLoad();
+await createIndexOnLoad();
 let db = null;
 
 async function createIndexOnLoad() {
@@ -19,7 +19,10 @@ async function createIndexOnLoad() {
     //1 - ascending index, -1 descending index
     await db.collection("users").createIndex({ username: 1 }, { unique: true });
     await db.collection("users").createIndex({ email: 1 }, { unique: true });
-  } catch (e) {}
+    console.log("Successfully created indexes!");
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 const usernameChangeInterval = 30; //in Days

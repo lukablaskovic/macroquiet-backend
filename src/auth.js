@@ -11,9 +11,11 @@ async function connectDatabase() {
     if (!db) {
       throw new Error("Could not connect to the database");
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 }
-connectDatabase();
+await connectDatabase();
 
 export default {
   //Authenticate user and send JWT token
