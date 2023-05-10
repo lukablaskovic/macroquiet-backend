@@ -1,7 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import * as path from "path";
 import "dotenv/config";
 import passportSetup from "./config/passport-setup";
 
@@ -11,6 +10,7 @@ import macroquietAccountRoutes from "./routes/user/macroquiet-account-routes.js"
 import webRoutes from "./routes/user/web-routes.js";
 import unityRoutes from "./routes/user/unity-routes.js";
 import adminRoutes from "./routes/admin-routes";
+import publicRoutes from "./routes/public-routes";
 
 const app = express();
 const port = process.env.PORT;
@@ -36,7 +36,6 @@ app.listen(port, () => {
 });
 //Service status
 app.get("/", (req, res) => {
-  //res.sendFile(path.join(__dirname, "/views/index.html"));
   res.status(200).send("MacroQuiet server - Up and Running ✅");
 });
 /////////////////////////////////////////////////////////////
@@ -44,5 +43,6 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", macroquietAccountRoutes);
 app.use("/api/users/profile", webRoutes);
-app.use("/api/users/games/", unityRoutes);
+app.use("/api/users/games", unityRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/public", publicRoutes);
