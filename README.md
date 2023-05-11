@@ -1,28 +1,31 @@
-# "MacroQuiet Back-end"
+# "MacroQuiet Express server"
+This repository contains the code for the MacroQuiet game development studio's Express.js web server.
 
- Node.js/Express.js/MongoDB Back-end aplikacije za MacroQuiet Game Development - 2 people Indie Game Development Studio.
- 
-![MacroQuiet Logo](/public/macroquiet-md.png?raw=true "Title")
-
+<img src="/public/macroquiet_logo.png?raw=true" width="256">
 
 ### Poveznica na aplikaciju
 - https://macroquiet.herokuapp.com/
 
-### Autori i zaduženja
+### Authors
+-   Alesandro Žužić (azuzic@unipu.hr)
+-   Luka Blašković (lblaskovi@unipu.hr)
 
--   Alesandro Žužić (azuzic@unipu.hr) - Moduli za: Unity - dodavanje trofeja, scoreboard, promjena lozinke, upload profilne i cover slike.
--   Luka Blašković (lblaskovi@unipu.hr) - Autentifikacija JWT token, spajanje na Unity API, MongoDB, Admin sučelje, email verifikacija, Firestack.js, Heroku
+### Features
+This server provides a rich set of functionalities including:
+- **MacroQuiet Account Registration**: Register a new MacroQuiet account directly from the application.
+- **Google OAuth Authentication:** Use Google's OAuth service for user authentication, powered by Passport.js.
+- **Email Confirmation**: Users can confirm their email addresses after registration.
+- **Password Reset**: Includes functionality to reset a user's password through email.
+- **JWT Authorization**: User authorization is done using JSON Web Tokens (JWT).
+- **REST API for Unity Games**: Communicate with Unity games through specially designed REST routes.
+- **Admin Panel REST API**: Control over data with a dedicated set of REST routes for the admin panel. This includes reading data, removing and adding documents in the MongoDB database, and uploading new images on S3 bucket.
 
-### Kratki opis funkcionalnosti
-Projekt se sastoji od igrice Stranded Away koja se izrađuje u Unity-u (DESKTOP igra), korisničkog sučelja na webu i backenda s odgovarajućom MongoDB bazom podataka. U grupu korisnika spadaju svi igrači koji bi htjeli igrati ovu igru.
-Prvo, igrači bi se trebali registrirati i potvrditi svoje podatke preko stranice na webu. Aplikacija će se sastojati od: "news"/home stranice gdje će se prikazivati novosti, game releases i changelogs.., prijavi se/registriraj se stranice, korisničkog profila, javnog scoreboarda, prostora sa grafovima tj. personaliziranim "statsima" igrača, stranice sa osvojenim peharima/achievementsima te stranice za download. Web sučelje će imati i admin verziju gdje će admin moći dodavati nove objave na news page te objaviti novi game release. Nakon što korisnik preuzme i instalira igricu, da bi ju mogao igrati morat će se prijaviti. Igra će, osim kratkog storymode-a, sadržavati 1 ili 2 gamemode-a koji će biti na principu da beskonačno traju, a igrač dobiva poene/rank što dulje izdrži. Ti podaci će se spremati u bazu i prikazivati će se javno na web sučelju (scoreboard). Također će se monitorirati i pohranjivati progress za otključavanje achievementa, što će također biti prikazano i sinkronizirano na webu.
+### Video presentation
+[Watch here](https://www.youtube.com/watch?v=R58tw1SOpjY)
 
-### Video prezentacija
-[Link](https://www.youtube.com/watch?v=R58tw1SOpjY)
+### Organization
 
-### Organizacija
-
-[Sveučilište Jurja Dobrile u Puli](http://www.unipu.hr/)  
-[Fakultet informatike u Puli](https://fipu.unipu.hr/)  
-Web aplikacije, ak.god. 2021./2022.  
+[Juraj Dobrila University of Pula](http://www.unipu.hr/)  
+[Pula Faculty of Informatics](https://fipu.unipu.hr/)  
+Web applications, Academic Year 2021./2022.  
 Mentor: **Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
