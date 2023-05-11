@@ -22,28 +22,41 @@ const router = Router();
 
 //Get collection
 router.get(
-  "/data/:name",
+  "/data/:collectionName/:id?",
   [JWT.verifyToken, JWT.adminCheck],
   async (req, res) => {
-    let db = await connect();
-    let dataName = String(req.params.name);
-    let filter = {};
-    for (const [key, value] of Object.entries(req.query)) {
-      filter[key] =
-        value === "true"
-          ? true
-          : value === "false"
-          ? false
-          : isNaN(value)
-          ? value
-          : parseInt(value);
-    }
     try {
-      let cursor = await db.collection(dataName).find(filter);
+      let db = await connect();
+      let collectionName = String(req.params.collectionName);
+      let id = req.params.id;
+      let filter = {};
+
+      // check if id is provided
+      if (id) {
+        // check if id is a string of 12 or 24 hex characters or an integer
+        if (
+          ObjectId.isValid(id) &&
+          (id.length === 12 || id.length === 24 || !isNaN(id))
+        ) {
+          filter._id = new ObjectId(id);
+        } else {
+          return res.status(400).json({ error: "Invalid ID format." });
+        }
+      } else if (Object.keys(req.query).length) {
+        // if filter is provided in query params, filter by that filter
+        for (const [key, value] of Object.entries(req.query)) {
+          filter[key] =
+            value === "true" ? true : value === "false" ? false : value;
+        }
+      }
+      console.log(filter);
+      // if no id or filter, the whole collection will be returned
+      let cursor = await db.collection(collectionName).find(filter);
       let result = await cursor.toArray();
-      res.status(200).json(result);
+
+      return res.status(200).json(result);
     } catch (e) {
-      res.status(400).json(e);
+      return res.status(400).json(e);
     }
   }
 );
@@ -68,10 +81,160 @@ router.post(
         res.status(201).send(result.insertedId);
       }
     } catch (e) {
-      res.status(400).send({ "Bad Request!": e });
+      res.status(400).json({ "Bad Request!": e });
     }
   }
 );
+
+//Update the fileds of a document
+router.patch(
+  "/data/:collectionName/:id",
+  [JWT.verifyToken, JWT.adminCheck],
+  async (req, res) => {
+    let collectionName = String(req.params.collectionName);
+    let id = req.params.id;
+    let doc = req.body;
+
+    // check if id is provided
+    if (id) {
+      // check if id is a string of 12 or 24 hex characters or an integer
+      if (
+        ObjectId.isValid(id) &&
+        (id.length === 12 || id.length === 24 || !isNaN(id))
+      ) {
+        try {
+          let db = await connect();
+          if (!doc) {
+            res
+              .status(400)
+              .json({ "Bad Request!": "No document data provided in body!" });
+            return;
+          }
+          let document_id = new ObjectId(id);
+          let result = await db
+            .collection(collectionName)
+            .updateOne(
+              { _id: document_id },
+              { $set: { ...doc, _id: document_id } }
+            );
+          if (result) res.status(204).send("Success");
+        } catch (e) {
+          res.status(400).json({ "Error updating document!": e });
+        }
+      } else {
+        return res.status(400).json({ error: "Invalid ID format." });
+      }
+    }
+  }
+);
+
+//Replace the whole document with different doc object
+router.put(
+  "/data/:collectionName/:id",
+  [JWT.verifyToken, JWT.adminCheck],
+  async (req, res) => {
+    let collectionName = String(req.params.collectionName);
+    let id = req.params.id;
+    let doc = req.body;
+
+    // check if id is provided
+    if (id) {
+      // check if id is a string of 12 or 24 hex characters or an integer
+      if (
+        ObjectId.isValid(id) &&
+        (id.length === 12 || id.length === 24 || !isNaN(id))
+      ) {
+        try {
+          let db = await connect();
+          if (!doc) {
+            return res
+              .status(400)
+              .json({ "Bad Request!": "No document data provided in body!" });
+          }
+          let document_id = new ObjectId(id);
+          let result = await db
+            .collection(collectionName)
+            .replaceOne({ _id: document_id }, doc);
+
+          if (result.modifiedCount > 0) {
+            res.status(204).send("Success");
+          } else {
+            res.status(404).json({ "Document not found!": document_id });
+          }
+        } catch (e) {
+          res.status(400).json({ "Error replacing document!": e });
+        }
+      } else {
+        return res.status(400).json({ error: "Invalid ID format." });
+      }
+    }
+  }
+);
+
+router.delete(
+  "/data/:collectionName/:id?",
+  [JWT.verifyToken, JWT.adminCheck],
+  async (req, res) => {
+    let collectionName = String(req.params.collectionName);
+    let id = req.params.id;
+    let filter = {};
+
+    if (!id && Object.keys(req.query).length === 0) {
+      // Delete the entire collection
+      try {
+        let db = await connect();
+        let result = await db.collection(collectionName).deleteMany({});
+        if (result.deletedCount > 0) {
+          res.status(202).send(result.deletedCount + " document(s) deleted");
+        } else {
+          res.status(404).send("Collection not found or empty!");
+        }
+      } catch (e) {
+        res.status(400).send("Could not delete collection! " + e);
+      }
+    } else if (id) {
+      if (
+        ObjectId.isValid(id) &&
+        (id.length === 12 || id.length === 24 || !isNaN(id))
+      ) {
+        // Delete a specific document
+        try {
+          let db = await connect();
+          let result = await db
+            .collection(collectionName)
+            .deleteOne({ _id: new ObjectId(id) });
+          if (result.deletedCount > 0) {
+            res.status(202).send(result.deletedCount + " document(s) deleted");
+          } else {
+            res.status(404).send("Document not found!");
+          }
+        } catch (e) {
+          res.status(400).send("Could not delete document! " + e);
+        }
+      } else {
+        return res.status(400).json({ error: "Invalid ID format." });
+      }
+    } else {
+      // Delete filtered documents
+      for (const [key, value] of Object.entries(req.query)) {
+        filter[key] =
+          value === "true" ? true : value === "false" ? false : value;
+      }
+      try {
+        let db = await connect();
+        let result = await db.collection(collectionName).deleteMany(filter);
+        if (result.deletedCount > 0) {
+          res.status(202).send(result.deletedCount + " document(s) deleted");
+        } else {
+          res.status(404).send("No matching documents found!");
+        }
+      } catch (e) {
+        res.status(400).send("Could not delete documents! " + e);
+      }
+    }
+  }
+);
+
 //Upload new image
 const allowedRoutesForUpload = Array.of("carousel");
 router.post(
@@ -102,27 +265,6 @@ router.post(
     } else {
       res.status(400).send("No 'route' provided in body");
       return;
-    }
-  }
-);
-router.delete(
-  "/data/:collectionName",
-  [JWT.verifyToken, JWT.adminCheck],
-  async (req, res) => {
-    let collectionName = String(req.params.collectionName);
-
-    let docID = req.query.id;
-
-    let db = await connect();
-    try {
-      let result = await db
-        .collection(collectionName)
-        .deleteOne({ _id: new ObjectId(docID) });
-      if (result) {
-        res.status(202).send(docID);
-      } else res.status(204).send("Document not found!");
-    } catch (e) {
-      throw new Error("Could not delete document!" + e);
     }
   }
 );
