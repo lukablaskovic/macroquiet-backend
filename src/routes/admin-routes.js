@@ -68,7 +68,7 @@ router.post(
         res.status(201).send(result.insertedId);
       }
     } catch (e) {
-      throw new Error("Could not insert document!" + e);
+      res.status(400).send({ "Bad Request!": e });
     }
   }
 );
