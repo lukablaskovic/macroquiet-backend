@@ -54,9 +54,9 @@ router.get(
       let cursor = await db.collection(collectionName).find(filter);
       let result = await cursor.toArray();
 
-      return res.status(200).json(result);
+      return res.status(200).json({ message: result });
     } catch (e) {
-      return res.status(400).json(e);
+      return res.status(400).json({ error: e });
     }
   }
 );
@@ -69,7 +69,7 @@ router.post(
     let collectionName = String(req.params.collectionName);
 
     if (collectionName == "users") {
-      res.status(400).send("Can't add users this way!");
+      res.status(400).json({ error: "Can't add users this way!" });
       return;
     }
 
@@ -81,7 +81,7 @@ router.post(
         res.status(201).send(result.insertedId);
       }
     } catch (e) {
-      res.status(400).json({ "Bad Request!": e });
+      res.status(400).json({ error: e });
     }
   }
 );
@@ -107,7 +107,7 @@ router.patch(
           if (!doc) {
             res
               .status(400)
-              .json({ "Bad Request!": "No document data provided in body!" });
+              .json({ error: "No document data provided in body!" });
             return;
           }
           let document_id = new ObjectId(id);
@@ -117,9 +117,9 @@ router.patch(
               { _id: document_id },
               { $set: { ...doc, _id: document_id } }
             );
-          if (result) res.status(204).send("Success");
+          if (result) res.status(204).json({ message: "Success" });
         } catch (e) {
-          res.status(400).json({ "Error updating document!": e });
+          res.status(400).json({ error: "Error updating document!" + e });
         }
       } else {
         return res.status(400).json({ error: "Invalid ID format." });
@@ -185,12 +185,14 @@ router.delete(
         let db = await connect();
         let result = await db.collection(collectionName).deleteMany({});
         if (result.deletedCount > 0) {
-          res.status(202).send(result.deletedCount + " document(s) deleted");
+          res
+            .status(202)
+            .json({ message: `${result.deletedCount} document(s) deleted` });
         } else {
-          res.status(404).send("Collection not found or empty!");
+          res.status(404).json({ error: "Collection not found or empty!" });
         }
       } catch (e) {
-        res.status(400).send("Could not delete collection! " + e);
+        res.status(400).json({ error: "Could not delete collection! " + e });
       }
     } else if (id) {
       if (
@@ -206,10 +208,10 @@ router.delete(
           if (result.deletedCount > 0) {
             res.status(202).send(result.deletedCount + " document(s) deleted");
           } else {
-            res.status(404).send("Document not found!");
+            res.status(404).json({ error: "Document not found!" });
           }
         } catch (e) {
-          res.status(400).send("Could not delete document! " + e);
+          res.status(400).json({ error: "Could not delete document! " + e });
         }
       } else {
         return res.status(400).json({ error: "Invalid ID format." });
@@ -226,10 +228,10 @@ router.delete(
         if (result.deletedCount > 0) {
           res.status(202).send(result.deletedCount + " document(s) deleted");
         } else {
-          res.status(404).send("No matching documents found!");
+          res.status(404).json({ error: "No matching documents found!" });
         }
       } catch (e) {
-        res.status(400).send("Could not delete documents! " + e);
+        res.status(400).json({ error: "Could not delete documents! " + e });
       }
     }
   }
@@ -260,10 +262,10 @@ router.post(
         let publicURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`;
         res.status(201).json({ public_url: publicURL });
       } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({ error: "Bad request!" });
       }
     } else {
-      res.status(400).send("No 'route' provided in body");
+      res.status(400).json({ error: "No 'route' provided in body" });
       return;
     }
   }

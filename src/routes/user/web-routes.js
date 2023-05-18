@@ -38,15 +38,17 @@ router.put("/description", [JWT.verifyToken], async (req, res) => {
             { _id: user._id },
             { $set: { "profile.description": description } }
           );
-        res.status(200).send("Profile description successfully changed!");
+        res
+          .status(200)
+          .json({ message: "Profile description successfully changed!" });
       } else {
-        res.status(404).send("User does not exist!");
+        res.status(404).json({ error: "User does not exist!" });
       }
     } catch (e) {
-      res.status(500).json(e);
+      res.status(500).json({ error: e });
     }
   } else {
-    res.status(400);
+    res.status(400).json({ error: "Bad request!" });
   }
 });
 
@@ -78,7 +80,7 @@ router.put(
       } catch (e) {
         res.status(400).send(e);
       }
-    } else res.status(400).send("Wrong image type provided.");
+    } else res.status(400).json({ error: "Wrong image type provided." });
   }
 );
 

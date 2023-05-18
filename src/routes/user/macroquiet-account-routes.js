@@ -20,13 +20,10 @@ router.post("/", async (req, res) => {
   let id = "";
   try {
     id = await user.register(userData, "MacroQuiet");
-    res
-      .status(201)
-      .json({
-        message:
-          "Successfully registered! Please confirm your email to log in.",
-        id: id,
-      });
+    res.status(201).json({
+      message: "Successfully registered! Please confirm your email to log in.",
+      id: id,
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -96,7 +93,7 @@ router.put(
           false
         );
         if (result) {
-          res.status(200).send({ message: "Password successfully changed." });
+          res.status(200).json({ message: "Password successfully changed." });
         }
       } else {
         res
@@ -146,9 +143,10 @@ router.post("/resetpassword", async (req, res) => {
       let token = JWT.generatePassResetToken(user._id);
       nodemailer.sendPasswordResetEmail(user.username, user.email, token);
     }
-    res
-      .status(200)
-      .send("A password reset email has been sent if such an account exists.");
+    res.status(200).json({
+      message:
+        "A password reset email has been sent if such an account exists.",
+    });
   } catch (e) {
     res.status(400).send({ error: e.message });
   }

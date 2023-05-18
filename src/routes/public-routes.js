@@ -27,7 +27,7 @@ router.get("/data/:name", async (req, res) => {
       let result = await cursor.toArray();
       res.status(200).json(result);
     } catch (e) {
-      res.status(400).json(e);
+      res.status(400).json({ error: e });
     }
   } else {
     res.status(401);
