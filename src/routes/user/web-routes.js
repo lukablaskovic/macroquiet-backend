@@ -77,7 +77,12 @@ router.put(
         //Update image in db
         let storeInDB = await user.updateImage(userID, publicURL, providedType);
         if (storeInDB)
-          res.status(201).json({ message: "Image uploaded successfully!" });
+          res
+            .status(201)
+            .json({
+              message: "Image uploaded successfully!",
+              publicURL: publicURL,
+            });
       } catch (e) {
         res.status(400).json({ error: e });
       }
