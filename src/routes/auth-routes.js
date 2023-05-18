@@ -66,9 +66,7 @@ router.get("/reset-password/:password_reset_code", async (req, res) => {
     let token = req.params.password_reset_code;
     let valid = JWT.verifyPassResetToken(token);
     if (valid) {
-      res
-        .status(200)
-        .redirect(`https://macroquiet.com/reset-password/${token}`);
+      res.status(200).redirect(`http://localhost:5173/reset-password/${token}`);
     }
   } catch (e) {
     return res.status(401).json({ error: e.message });

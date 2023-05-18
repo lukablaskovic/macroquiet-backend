@@ -6,6 +6,7 @@ import nodemailer from "./services/nodemailer.js";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 let db = null;
+
 (async () => {
   try {
     db = await connect();
