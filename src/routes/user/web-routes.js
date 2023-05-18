@@ -76,9 +76,10 @@ router.put(
         let publicURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`;
         //Update image in db
         let storeInDB = await user.updateImage(userID, publicURL, providedType);
-        if (storeInDB) res.status(201).send("Image uploaded successfully!");
+        if (storeInDB)
+          res.status(201).json({ message: "Image uploaded successfully!" });
       } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({ error: e });
       }
     } else res.status(400).json({ error: "Wrong image type provided." });
   }
