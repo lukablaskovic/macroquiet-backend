@@ -158,7 +158,10 @@ export default {
         user.username_last_changed,
         "days"
       );
-
+      if (user.username === new_username)
+        throw new Error(
+          "The new username you have entered is identical to your current username. Please enter a new one."
+        );
       if (
         daysSinceLastChange >= usernameChangeInterval ||
         user.username_last_changed === null

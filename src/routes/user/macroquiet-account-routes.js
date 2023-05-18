@@ -110,7 +110,7 @@ router.put("/current/username", [JWT.verifyToken], async (req, res) => {
   try {
     if (new_username) {
       let result = await user.changeUsername(userID, new_username);
-      if (result) {
+      if (result == true) {
         res.status(200).json({
           message: "Username changed successfully!",
           new_username: new_username,
