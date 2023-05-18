@@ -20,7 +20,13 @@ router.post("/", async (req, res) => {
   let id = "";
   try {
     id = await user.register(userData, "MacroQuiet");
-    res.status(201).json({ id: id });
+    res
+      .status(201)
+      .json({
+        message:
+          "Successfully registered! Please confirm your email to log in.",
+        id: id,
+      });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
