@@ -117,7 +117,7 @@ router.put("/current/username", [JWT.verifyToken], async (req, res) => {
         });
       } else {
         res.status(400).json({
-          error: `You can change your username again in ${result} days.`,
+          error: `You may change your username again in ${result} days.`,
           usernameChangeWaitDays: result,
         });
       }
