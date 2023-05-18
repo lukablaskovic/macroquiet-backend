@@ -54,7 +54,7 @@ router.get(
       let cursor = await db.collection(collectionName).find(filter);
       let result = await cursor.toArray();
 
-      return res.status(200).json({ message: result });
+      return res.status(200).json(result);
     } catch (e) {
       return res.status(400).json({ error: e });
     }
