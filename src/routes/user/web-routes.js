@@ -3,6 +3,7 @@ import JWT from "../../services/JWT";
 
 import connect from "../../services/mongoClient.js";
 import user from "../../user";
+import { ObjectId } from "mongodb";
 
 import multer from "multer";
 import S3Client from "../../services/S3Client";
@@ -52,6 +53,27 @@ router.put("/description", [JWT.verifyToken], async (req, res) => {
   }
 });
 
+async function getCurrentImageKey(userID, type) {
+  try {
+    let db = await connect();
+    //find user
+    let user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userID) });
+
+    const urlStr = user.profile.image[type];
+
+    const url = new URL(urlStr);
+
+    const parts = url.pathname.split("/").slice(2);
+    let key = parts.join("/");
+
+    return key;
+  } catch (e) {
+    return null;
+  }
+}
+
 const imgTypes = Array.of("avatar", "cover");
 //Upload current user image (cover or avatar) (authenticated user)
 router.put(
@@ -63,26 +85,39 @@ router.put(
     if (imgTypes.includes(providedType)) {
       try {
         const imageName = randomImageName();
-        const params = {
+        const updateParams = {
           Bucket: BUCKET_NAME,
           Key: `${String(providedType)}/${imageName}`,
           Body: req.file.buffer,
           ContentType: req.file.mimetype,
         };
 
-        let command = new S3Client.PutObjectCommand(params);
+        let command = new S3Client.PutObjectCommand(updateParams);
         await S3Client.S3.send(command);
 
-        let publicURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${params.Key}`;
+        let publicURL = `https://${BUCKET_NAME}.s3.amazonaws.com/${updateParams.Key}`;
+
+        let currentKey = await getCurrentImageKey(userID, providedType);
+        let objectToDelete = `${providedType}/${currentKey}`;
+
+        //Deletes from aws
+        const deleteParams = {
+          Bucket: BUCKET_NAME,
+          Key: objectToDelete,
+        };
+        command = new S3Client.DeleteObjectCommand(deleteParams);
+        await S3Client.S3.send(command);
+
         //Update image in db
         let storeInDB = await user.updateImage(userID, publicURL, providedType);
+
+        S3Client.S3.destroy;
+
         if (storeInDB)
-          res
-            .status(201)
-            .json({
-              message: "Image uploaded successfully!",
-              publicURL: publicURL,
-            });
+          res.status(201).json({
+            message: "Image uploaded successfully!",
+            publicURL: publicURL,
+          });
       } catch (e) {
         res.status(400).json({ error: e });
       }
