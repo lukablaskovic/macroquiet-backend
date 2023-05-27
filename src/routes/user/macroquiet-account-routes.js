@@ -174,4 +174,23 @@ router.put("/resetpassword", async (req, res) => {
   }
 });
 
+router.delete("/current", [JWT.verifyToken], async (req, res) => {
+  const userID = req.jwt._id;
+
+  try {
+    let result = await user.deleteUser(userID);
+    if (result) {
+      res.status(200).json({
+        message: "User account deleted successfully!",
+      });
+    } else {
+      res.status(400).json({
+        error: "An error occurred while attempting to delete your account.",
+      });
+    }
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
 export default router;

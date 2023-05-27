@@ -214,6 +214,32 @@ export default {
       return user;
     } else return null;
   },
+  async deleteUser(userID) {
+    let user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userID) });
+    if (user) {
+      try {
+        let result = await db
+          .collection("users")
+          .deleteOne({ _id: new ObjectId(userID) });
+
+        if (result.deletedCount > 0) {
+          return true;
+        } else {
+          throw new Error(
+            "Deletion was unsuccessful. No records were deleted."
+          );
+        }
+      } catch (e) {
+        throw new Error(
+          "An error occurred while attempting to delete the user: " + e.message
+        );
+      }
+    } else {
+      throw new Error("User with the provided ID doesn't exist.");
+    }
+  },
 };
 
 const saltRounds = 10;
