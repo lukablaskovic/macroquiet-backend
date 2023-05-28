@@ -97,7 +97,7 @@ export default {
       if (await bcryptCompare(publicKey, process.env.UNITY_ENCRYPTED_KEY)) {
         return next();
       } else {
-        res.status(401), send("Invalid secret key!");
+        res.status(401).send("Invalid secret key!");
       }
     } catch (e) {
       res.send(e);
