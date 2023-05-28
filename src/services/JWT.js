@@ -3,6 +3,8 @@ import "dotenv/config";
 import connect from "./mongoClient";
 import { ObjectId } from "mongodb";
 
+import bcrypt from "bcrypt";
+
 let db = null;
 (async () => {
   try {
@@ -88,4 +90,27 @@ export default {
       res.send(e);
     }
   },
+
+  async unityCheck(req, res, next) {
+    try {
+      let publicKey = req.publicKey;
+      if (await bcryptCompare(publicKey, process.env.UNITY_ENCRYPTED_KEY)) {
+        return next();
+      } else {
+        res.status(401), send("Invalid secret key!");
+      }
+    } catch (e) {
+      res.send(e);
+    }
+  },
 };
+
+async function bcryptEncrypt(publicKey) {
+  const encrypted = await bcrypt.hash(publicKey, 10);
+  return encrypted;
+}
+
+async function bcryptCompare(key, keyHash) {
+  const match = await bcrypt.compare(key, keyHash);
+  return match;
+}

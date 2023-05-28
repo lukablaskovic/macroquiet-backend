@@ -1,27 +1,26 @@
 import { Router } from "express";
 import connect from "../../services/mongoClient.js";
+import JWT from "../../services/JWT";
 
 // --> /api/users/games
 const router = Router();
 
 //Get user game profile from db
-router.get("/", async (req, res) => {
-  let query = String(req.query.username);
+router.get("/profile/:username", [JWT.unityCheck], async (req, res) => {
+  let username = String(req.params.username);
   try {
     let db = await connect();
-    let user = await db.collection("users").findOne({ username: query });
+    let user = await db.collection("users").findOne({ username: username });
     let userData = {
       profile: user.profile,
     };
-    res.send(userData);
-    return;
+    return res.status(200).json(userData);
   } catch (e) {
-    res.status(500).json({ error: e.message });
-    return;
+    return res.status(500).json({ error: e.message });
   }
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", [JWT.unityCheck], async (req, res) => {
   let changes = req.body;
   let game = JSON.parse(changes.game);
 
@@ -47,7 +46,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/update", async (req, res) => {
+router.post("/update", [JWT.unityCheck], async (req, res) => {
   let changes = req.body;
   let game = JSON.parse(changes.game);
 
