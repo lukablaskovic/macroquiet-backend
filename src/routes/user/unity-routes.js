@@ -6,7 +6,7 @@ import JWT from "../../services/JWT";
 const router = Router();
 
 //Get user game profile from db
-router.get("/:username", [JWT.unityCheck], async (req, res) => {
+router.post("/:username", [JWT.unityCheck], async (req, res) => {
   let username = String(req.params.username);
   try {
     let db = await connect();
