@@ -93,7 +93,7 @@ export default {
 
   async unityCheck(req, res, next) {
     try {
-      let publicKey = req.publicKey;
+      let publicKey = req.body.publicKey;
       if (await bcryptCompare(publicKey, process.env.UNITY_ENCRYPTED_KEY)) {
         return next();
       } else {
