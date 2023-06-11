@@ -1,4 +1,4 @@
-# "MacroQuiet Express server"
+# "MacroQuiet Express Server"
 This repository contains the code for the MacroQuiet game development studio's Express.js web server.
 
 <img src="/public/macroquiet_logo.png?raw=true" width="256">
