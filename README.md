@@ -3,7 +3,7 @@ This repository contains the code for the MacroQuiet game development studio's E
 
 <img src="/public/macroquiet_logo.png?raw=true" width="256">
 
-### Poveznica na aplikaciju
+### Link to the application
 - https://macroquiet.herokuapp.com/
 
 ### Authors
