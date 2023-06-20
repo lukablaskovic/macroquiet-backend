@@ -39,4 +39,4 @@ This server provides a rich set of functionalities including:
 [Juraj Dobrila University of Pula](http://www.unipu.hr/)  
 [Pula Faculty of Informatics](https://fipu.unipu.hr/)  
 Web applications, Academic Year 2021./2022.  
-Mentor: **Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
+Mentor: **doc. dr. sc. Nikola Tanković** (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)
