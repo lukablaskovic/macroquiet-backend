@@ -9,9 +9,10 @@
 
 <hr />
 <div align="center">
-<img src="/public/macroquiet_logo.png?raw=true" width="256">
+<img src="/public/mq_logo_new.png?raw=true" width="256">
 </div>
 
+<hr />
 Welcome to the MacroQuiet Game Development Studio's Express.js web server repository! This repository contains the code for the web server used in our game development projects.
 
 
