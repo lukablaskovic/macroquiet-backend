@@ -1,7 +1,7 @@
 {
-  "name": "stranded-away-backend",
-  "version": "1.0.0",
-  "description": "Node.js/Express.js/MongoDB Back-end aplikacije za MacroQuiet Game Development - 2 people Indie Game Development Studio.",
+  "name": "macroquiet-web-server",
+  "version": "2.0.0",
+  "description": "Node.js/Express.js/MongoDB web server for MacroQuiet - Indie Game Development Studio.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lukablaskovic/stranded-away-backend.git"
+    "url": "git+https://github.com/lukablaskovic/macroquiet-express-server"
   },
   "author": "lukablaskovic",
   "license": "ISC",
