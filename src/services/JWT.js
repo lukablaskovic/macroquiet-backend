@@ -37,6 +37,7 @@ export default {
       throw new Error("Server error!");
     }
   },
+
   verifyPassResetToken(token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_EMAIL_SECRET);
@@ -77,6 +78,7 @@ export default {
       res.send(e);
     }
   },
+
   async regMethodCheck(req, res, next) {
     try {
       let userData = req.jwt;
@@ -95,6 +97,7 @@ export default {
     try {
       let publicKey = req.body.publicKey;
       if (await bcryptCompare(publicKey, process.env.UNITY_ENCRYPTED_KEY)) {
+        console.log("Success!");
         return next();
       } else {
         res.status(401).send("Invalid secret key!");

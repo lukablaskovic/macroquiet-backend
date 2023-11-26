@@ -11,6 +11,7 @@ let transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
+
 function generateToken(userEmail) {
   try {
     let emailToken = jwt.sign(userEmail, process.env.JWT_EMAIL_SECRET, {
@@ -30,7 +31,7 @@ async function sendConfirmationEmail(username, email, email_confirmation_code) {
     subject: "Please confirm your MacroQuiet account.",
     html: `
       <div style="font-family: Poppins, sans-serif; padding: 10px; text-align: center;">
-        <img src="https://pbs.twimg.com/profile_images/1524690480256147457/1JQedO6I_400x400.png" alt="MacroQuiet Logo" style="display: block; margin: 0 auto;" width="100" height="100">
+        <img src="https://macroquiet.com/assets/macroquiet_logo_icon-63f24a7c.png" alt="MacroQuiet Logo" style="display: block; margin: 0 auto;" width="100" height="100">
         <h2 style="color: #333;">Hello there ${username}</h2>
         <p style="color: #666;">We are so excited you've decided to join our community!</p>
         <p style="color: #666;">Please confirm your email by clicking <a href="${url}" style="color: #337ab7; text-decoration: none;">here</a>.</p> 
@@ -47,7 +48,7 @@ async function sendPasswordResetEmail(username, email, password_reset_code) {
     subject: "Password reset for your MacroQuiet account.",
     html: `
     <div style="font-family: Poppins, sans-serif; padding: 10px; text-align: center;">
-      <img src="https://pbs.twimg.com/profile_images/1524690480256147457/1JQedO6I_400x400.png" alt="MacroQuiet Logo" style="display: block; margin: 0 auto;" width="100" height="100">
+      <img src="https://macroquiet.com/assets/macroquiet_logo_icon-63f24a7c.png" alt="MacroQuiet Logo" style="display: block; margin: 0 auto;" width="100" height="100">
       <h2 style="color: #333;">Hi ${username},</h2>
       <p style="color: #666;">Looks like a request was made to reset the password for your MacroQuiet account.</p>
       <p style="color: #666;">No problem!, You can reset your password now by clicking on the button below.</p>
